@@ -151,6 +151,92 @@
     </div>
   </section>
 
+  <!-- 3D Digital Twin Ward Scanner Section -->
+  <section class="digital-twin-section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag"><i class="fa-solid fa-cube"></i> Real-Time Spatial Hologram</span>
+        <h2 class="section-title">3D Digital Twin Ward Scanner</h2>
+        <p class="section-description">
+          Rotate and inspect your city in an interactive 3D procedural Digital Twin. Pulsing beacons highlight live civic defects across Bengaluru.
+        </p>
+      </div>
+
+      <div class="digital-twin-viewport" id="landing-3d-twin-viewport">
+        <!-- Live HUD overlay -->
+        <div class="twin-hud-overlay">
+          <div style="font-size: 0.75rem; font-weight: 800; color: #38bdf8; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.25rem;">
+            <i class="fa-solid fa-satellite fa-spin"></i> TELEMETRY ACTIVE
+          </div>
+          <div style="font-size: 1.1rem; font-weight: 800; color: #fff;">Ward 150 (Indiranagar & Domlur)</div>
+          <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.35rem;">
+            <span style="color: #ef4444;"><i class="fa-solid fa-circle"></i> 2 Critical Craters</span> &bull; 
+            <span style="color: #f59e0b;"><i class="fa-solid fa-circle"></i> 1 High Streetlight</span> &bull; 
+            <span style="color: #10b981;"><i class="fa-solid fa-circle"></i> 2 Resolved</span>
+          </div>
+        </div>
+
+        <div class="twin-controls-badge">
+          <i class="fa-solid fa-arrows-up-down-left-right"></i> Click & Drag to Orbit Camera
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Civic Impact in Motion Video Reel Section -->
+  <section class="video-showcase-section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag"><i class="fa-solid fa-clapperboard"></i> Ground Execution</span>
+        <h2 class="section-title">Civic Impact in Motion</h2>
+        <p class="section-description">
+          Witness real-time municipal deployments, automated bitumen laying, and streetlight restoration captured on video.
+        </p>
+      </div>
+
+      <div class="video-grid">
+        <div class="video-card card-3d">
+          <div class="video-player-wrap">
+            <video autoplay muted loop playsinline poster="assets/3d_pothole_smart_repair.jpg">
+              <source src="https://assets.mixkit.co/videos/preview/mixkit-road-in-a-city-at-night-with-lots-of-traffic-41846-large.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="video-card-body">
+            <span class="video-tag"><i class="fa-solid fa-road"></i> Smart Asphalt Laying</span>
+            <h4 style="font-size: 1.05rem; margin-bottom: 0.4rem;">Pothole Elimination Drive</h4>
+            <p class="text-muted" style="font-size: 0.85rem;">Mechanized roller compaction and hot-mix bitumen application on 100 Feet Road corridor.</p>
+          </div>
+        </div>
+
+        <div class="video-card card-3d">
+          <div class="video-player-wrap">
+            <video autoplay muted loop playsinline poster="assets/3d_smart_city_hologram.jpg">
+              <source src="https://assets.mixkit.co/videos/preview/mixkit-traffic-at-night-in-a-busy-city-43224-large.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="video-card-body">
+            <span class="video-tag"><i class="fa-solid fa-lightbulb"></i> Smart Streetlighting</span>
+            <h4 style="font-size: 1.05rem; margin-bottom: 0.4rem;">Night Corridor Illumination</h4>
+            <p class="text-muted" style="font-size: 0.85rem;">BESCOM squad replaced 6 failed LED luminaire capacitors for safe nighttime pedestrian transit.</p>
+          </div>
+        </div>
+
+        <div class="video-card card-3d">
+          <div class="video-player-wrap">
+            <video autoplay muted loop playsinline poster="https://images.unsplash.com/photo-1530587191325-3db32d826c18?auto=format&fit=crop&w=600&q=80">
+              <source src="https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-41554-large.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="video-card-body">
+            <span class="video-tag"><i class="fa-solid fa-trash-can"></i> Swachh City Initiative</span>
+            <h4 style="font-size: 1.05rem; margin-bottom: 0.4rem;">Zero-Dump Waste Clearance</h4>
+            <p class="text-muted" style="font-size: 0.85rem;">Daily compactor vehicle routing and bio-sanitization eliminating persistent roadside black spots.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Civic Issue Categories Showcase -->
   <section style="padding: 5rem 0; background: var(--bg-surface);">
     <div class="container">
@@ -420,6 +506,7 @@
   </footer>
 
   <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="js/utils.js"></script>
   <script src="js/storage.js"></script>
   <script src="js/auth.js"></script>
@@ -428,6 +515,8 @@
   <script src="js/complaints.js"></script>
   <script src="js/emailService.js"></script>
   <script src="js/ui.js"></script>
+  <script src="js/threeScene.js"></script>
+  <script src="js/tilt3d.js"></script>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -435,6 +524,11 @@
       const sliderContainer = document.getElementById('landing-ba-slider');
       if (sliderContainer && UI.initBeforeAfterSlider) {
         UI.initBeforeAfterSlider(sliderContainer);
+      }
+
+      // Initialize 3D Digital Twin City Viewport
+      if (typeof ThreeCity !== 'undefined') {
+        ThreeCity.init('landing-3d-twin-viewport');
       }
     });
   </script>

@@ -82,6 +82,10 @@
         <button type="button" class="btn btn-outline btn-sm" id="btn-toggle-heatmap">
           <i class="fa-solid fa-fire text-danger"></i> Toggle Heatmap
         </button>
+
+        <button type="button" class="btn btn-primary btn-sm" id="btn-toggle-3d-twin">
+          <i class="fa-solid fa-cube text-cyan"></i> 3D Digital Twin View
+        </button>
       </div>
     </div>
 
@@ -108,9 +112,18 @@
 
     <!-- Interactive Leaflet Map Box -->
     <div id="explore-leaflet-map" class="leaflet-map-fullscreen"></div>
+
+    <!-- 3D Digital Twin Viewport (Toggleable) -->
+    <div id="explore-3d-viewport" class="leaflet-map-fullscreen" style="display: none; position: relative; border-radius: var(--radius-lg); overflow: hidden; background: #030712;">
+      <div class="twin-hud-overlay" style="position: absolute; top: 15px; left: 15px; z-index: 10; display: flex; gap: 0.75rem; flex-wrap: wrap;">
+        <span class="hud-pill"><i class="fa-solid fa-satellite-dish"></i> Spatial 3D Ward Mode</span>
+        <span class="hud-pill"><i class="fa-solid fa-hand"></i> Left-Click: Orbit &bull; Right-Click: Pan &bull; Scroll: Zoom</span>
+      </div>
+    </div>
   </div>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="js/utils.js"></script>
   <script src="js/storage.js"></script>
   <script src="js/auth.js"></script>
@@ -120,6 +133,8 @@
   <script src="js/emailService.js"></script>
   <script src="js/map.js"></script>
   <script src="js/ui.js"></script>
+  <script src="js/threeScene.js"></script>
+  <script src="js/tilt3d.js"></script>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -166,6 +181,34 @@
         heatmapBtn.classList.toggle('btn-danger', isHeatmapActive);
         heatmapBtn.classList.toggle('btn-outline', !isHeatmapActive);
         filterAndUpdate();
+      });
+
+      // 3D Twin toggle
+      let is3DActive = false;
+      let is3DInitialized = false;
+      const twinBtn = document.getElementById('btn-toggle-3d-twin');
+      const leafletEl = document.getElementById('explore-leaflet-map');
+      const twinEl = document.getElementById('explore-3d-viewport');
+
+      twinBtn.addEventListener('click', () => {
+        is3DActive = !is3DActive;
+        twinBtn.classList.toggle('btn-secondary', is3DActive);
+        twinBtn.classList.toggle('btn-primary', !is3DActive);
+
+        if (is3DActive) {
+          leafletEl.style.display = 'none';
+          twinEl.style.display = 'block';
+          if (!is3DInitialized && typeof ThreeCity !== 'undefined') {
+            ThreeCity.init('explore-3d-viewport');
+            is3DInitialized = true;
+          }
+          twinBtn.innerHTML = '<i class="fa-solid fa-map"></i> Switch to 2D Map';
+        } else {
+          twinEl.style.display = 'none';
+          leafletEl.style.display = 'block';
+          if (map && map.invalidateSize) map.invalidateSize();
+          twinBtn.innerHTML = '<i class="fa-solid fa-cube text-cyan"></i> 3D Digital Twin View';
+        }
       });
     });
   </script>

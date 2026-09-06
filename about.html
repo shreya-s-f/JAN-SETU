@@ -52,6 +52,19 @@
 
     <div class="card mb-4" style="line-height: 1.8; font-size: 1.05rem;">
       <h3 style="font-size: 1.35rem; font-weight: 800; margin-bottom: 1rem; color: var(--primary);">The Problem We Solve</h3>
+      
+      <!-- 3D Isometric Urban Grid Card -->
+      <div class="mb-4" style="border-radius: var(--radius-lg); overflow: hidden; position: relative; border: 1px solid rgba(0, 212, 255, 0.3); box-shadow: 0 12px 40px rgba(0, 102, 255, 0.15);" data-tilt>
+        <img src="assets/3d_smart_city_hologram.jpg" alt="3D Smart City Twin Hologram" style="width: 100%; height: auto; max-height: 380px; object-fit: cover; display: block;">
+        <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 1.5rem; background: linear-gradient(180deg, transparent, rgba(3, 7, 18, 0.92));">
+          <div style="font-size: 0.8rem; font-weight: 700; color: #00d4ff; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.25rem;">
+            <i class="fa-solid fa-cube"></i> Spatial Civic Intelligence
+          </div>
+          <div style="font-size: 1.25rem; font-weight: 800; color: #ffffff;">Next-Gen 3D Digital Twin City Model</div>
+          <div style="font-size: 0.88rem; color: #94a3b8;">Real-time LiDAR point clouds and verified citizen spatial geocoding for zero-latency municipal response.</div>
+        </div>
+      </div>
+
       <p class="text-muted mb-3">
         In rapidly expanding Indian cities like Bengaluru, Mumbai, Delhi, and Hyderabad, millions of citizens navigate daily civic hazards: severe craters and potholes, overflowing roadside garbage dumps, broken streetlights that create dark unsafe stretches, and choked drains that flood roads in 20 minutes of rain.
       </p>
@@ -124,5 +137,6 @@
   <script src="js/complaints.js"></script>
   <script src="js/emailService.js"></script>
   <script src="js/ui.js"></script>
+  <script src="js/tilt3d.js"></script>
 </body>
 </html>

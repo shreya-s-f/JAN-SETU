@@ -238,8 +238,12 @@
 
       const badgesContainer = document.getElementById('badges-container');
       badgesContainer.innerHTML = badges.map(b => `
-        <div class="badge-tile ${b.unlocked ? '' : 'locked'}">
-          <div class="badge-tile-icon">${b.icon}</div>
+        <div class="badge-tile ${b.unlocked ? '' : 'locked'}" data-tilt>
+          <div class="badge-tile-icon">
+            ${b.id === 'b-champion' 
+              ? `<img src="assets/3d_civic_champion_badge.jpg" alt="3D Civic Champion Badge" style="width: 52px; height: 52px; border-radius: 50%; object-fit: cover; box-shadow: 0 4px 14px rgba(245, 158, 11, 0.4); border: 2px solid #f59e0b; display: inline-block;">`
+              : b.icon}
+          </div>
           <div class="badge-tile-title">${b.name}</div>
           <div class="badge-tile-desc">${b.desc}</div>
           <span class="badge ${b.unlocked ? 'badge-success' : 'badge-neutral'} mt-1">
@@ -247,6 +251,10 @@
           </span>
         </div>
       `).join('');
+
+      if (window.Tilt3D && window.Tilt3D.init) {
+        window.Tilt3D.init();
+      }
 
       // Save profile updates
       document.getElementById('btn-save-profile').addEventListener('click', () => {
@@ -265,5 +273,6 @@
       });
     });
   </script>
+  <script src="js/tilt3d.js"></script>
 </body>
 </html>
