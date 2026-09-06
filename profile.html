@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Civic Profile & Impact — JanSetu 🇮🇳</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+
+  <!-- Top Navbar -->
+  <header class="top-navbar">
+    <div class="d-flex align-center gap-2">
+      <button class="mobile-nav-toggle" id="mobile-sidebar-toggle">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+      <a href="index.html" class="brand-logo">
+        <span class="flag-badge">🇮🇳</span>
+        <span>JAN<span class="logo-accent">SETU</span></span>
+      </a>
+    </div>
+
+    <div class="nav-actions">
+      <a href="notifications.html" class="icon-btn" aria-label="Notifications">
+        <i class="fa-regular fa-bell"></i>
+        <span class="icon-badge notification-badge-count" style="display: none;">0</span>
+      </a>
+      <button class="icon-btn" id="theme-toggle-btn" aria-label="Toggle Theme">
+        <i class="fa-regular fa-sun"></i>
+      </button>
+      <div id="nav-user-container"></div>
+    </div>
+  </header>
+
+  <!-- App Layout -->
+  <div class="app-layout">
+    <aside class="sidebar">
+      <div class="sidebar-heading">Citizen Portal</div>
+      <ul class="sidebar-nav">
+        <li>
+          <a href="citizen-dashboard.html" class="sidebar-link">
+            <i class="fa-solid fa-gauge"></i> <span>Dashboard</span>
+          </a>
+        </li>
+        <li>
+          <a href="report-issue.html" class="sidebar-link">
+            <i class="fa-solid fa-circle-plus"></i> <span>Report Issue</span>
+          </a>
+        </li>
+        <li>
+          <a href="my-complaints.html" class="sidebar-link">
+            <i class="fa-solid fa-list-check"></i> <span>My Complaints</span>
+          </a>
+        </li>
+        <li>
+          <a href="explore-issues.html" class="sidebar-link">
+            <i class="fa-solid fa-map-location-dot"></i> <span>Explore Issues</span>
+          </a>
+        </li>
+        <li>
+          <a href="notifications.html" class="sidebar-link">
+            <i class="fa-solid fa-bell"></i> <span>Notifications</span>
+          </a>
+        </li>
+        <li>
+          <a href="profile.html" class="sidebar-link active">
+            <i class="fa-solid fa-user-shield"></i> <span>Civic Profile</span>
+          </a>
+        </li>
+        <li>
+          <a href="settings.html" class="sidebar-link">
+            <i class="fa-solid fa-sliders"></i> <span>Settings</span>
+          </a>
+        </li>
+      </ul>
+      <div class="sidebar-footer">
+        <a href="javascript:void(0)" onclick="Auth.logout()" class="sidebar-link text-danger">
+          <i class="fa-solid fa-right-from-bracket"></i> <span>Sign Out</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="dashboard-header">
+        <div>
+          <h1>Citizen Profile & Impact Score</h1>
+          <p class="text-muted">Track your civic contributions, verified community badges, and neighborhood standing.</p>
+        </div>
+        <div class="dashboard-actions">
+          <button class="btn btn-primary" onclick="UI.openModal('edit-profile-modal')">
+            <i class="fa-solid fa-pen-to-square"></i> Edit Profile
+          </button>
+        </div>
+      </div>
+
+      <!-- Profile Header Hero Card -->
+      <div class="card mb-4" style="background: linear-gradient(135deg, var(--bg-surface) 0%, rgba(0, 102, 255, 0.08) 100%);">
+        <div style="display: flex; align-items: center; gap: 2rem; flex-wrap: wrap;">
+          <img id="prof-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" alt="Avatar" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid var(--primary);">
+          
+          <div style="flex: 1; min-width: 250px;">
+            <div class="d-flex align-center gap-2 mb-1">
+              <h2 id="prof-name" style="font-size: 1.6rem; font-weight: 800;">Citizen Name</h2>
+              <span class="badge badge-primary">VERIFIED CITIZEN</span>
+            </div>
+            <p class="text-muted mb-2">
+              <i class="fa-solid fa-location-dot text-primary"></i> <span id="prof-ward">Ward 150 - Indiranagar</span>, <span id="prof-city">Bengaluru</span> &bull; 
+              <i class="fa-solid fa-calendar"></i> Member since <span id="prof-member-since">2025</span>
+            </p>
+            <div class="d-flex gap-3" style="font-size: 0.9rem;">
+              <span><i class="fa-solid fa-envelope text-dim"></i> <span id="prof-email">email@jansetu.in</span></span>
+              <span><i class="fa-solid fa-phone text-dim"></i> <span id="prof-phone">+91 98000 00000</span></span>
+            </div>
+          </div>
+
+          <!-- Impact Score Big Widget -->
+          <div style="text-align: center; background: var(--bg-surface-elevated); padding: 1.25rem 2rem; border-radius: var(--radius-lg); border: 1px solid var(--border-color);">
+            <div style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">Civic Impact Score</div>
+            <div style="font-size: 2.8rem; font-weight: 800; font-family: 'Space Grotesk', sans-serif; color: var(--primary);" id="prof-impact-score">340</div>
+            <span class="badge badge-success">Top 5% in Indiranagar</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Impact Metrics & Badges Grid -->
+      <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 1.5rem; margin-bottom: 2rem;">
+        <!-- Points Breakdown Card -->
+        <div class="card">
+          <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 1rem;">Points Breakdown</h3>
+          
+          <div style="display: flex; flex-direction: column; gap: 0.85rem; font-size: 0.9rem;">
+            <div class="d-flex justify-between align-center" style="padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-color);">
+              <span><i class="fa-solid fa-bullhorn text-primary"></i> Valid Reports Logged</span>
+              <strong>+20 pts each</strong>
+            </div>
+            <div class="d-flex justify-between align-center" style="padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-color);">
+              <span><i class="fa-solid fa-circle-check text-success"></i> Issues Successfully Resolved</span>
+              <strong>+50 pts each</strong>
+            </div>
+            <div class="d-flex justify-between align-center" style="padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-color);">
+              <span><i class="fa-solid fa-location-crosshairs text-warning"></i> Ground Status Verifications</span>
+              <strong>+10 pts each</strong>
+            </div>
+            <div class="d-flex justify-between align-center" style="padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-color);">
+              <span><i class="fa-solid fa-arrow-up text-info"></i> Community Upvotes Received</span>
+              <strong>+2 pts each</strong>
+            </div>
+            <div class="d-flex justify-between align-center">
+              <span><i class="fa-solid fa-star text-warning"></i> Resolution Ratings Given</span>
+              <strong>+15 pts each</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Badges Roster Card -->
+        <div class="card">
+          <div class="d-flex justify-between align-center mb-3">
+            <h3 style="font-size: 1.15rem; font-weight: 700;">Earned Civic Badges</h3>
+            <span class="text-muted" style="font-size: 0.85rem;" id="badge-count-text">3 of 5 Unlocked</span>
+          </div>
+
+          <div class="badges-grid" id="badges-container"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Edit Profile Modal -->
+  <div id="edit-profile-modal" class="modal-backdrop">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title">Edit Profile Information</h3>
+        <button class="modal-close" onclick="UI.closeModal('edit-profile-modal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label" for="edit-name">Full Name</label>
+          <input type="text" id="edit-name" class="form-control">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="edit-phone">Mobile Phone</label>
+          <input type="text" id="edit-phone" class="form-control">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="edit-ward">Ward / Locality</label>
+          <input type="text" id="edit-ward" class="form-control">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="UI.closeModal('edit-profile-modal')">Cancel</button>
+        <button class="btn btn-primary" id="btn-save-profile">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/utils.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/notifications.js"></script>
+  <script src="js/priority.js"></script>
+  <script src="js/complaints.js"></script>
+  <script src="js/emailService.js"></script>
+  <script src="js/ui.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!Auth.requireAuth(['citizen', 'admin', 'worker'])) return;
+      const user = Auth.getCurrentUser();
+      const complaints = Storage.get(STORAGE_KEYS.COMPLAINTS, []);
+
+      // Populate user info
+      document.getElementById('prof-name').textContent = user.name;
+      document.getElementById('prof-email').textContent = user.email;
+      document.getElementById('prof-phone').textContent = user.phone || '+91 98450 12345';
+      document.getElementById('prof-city').textContent = user.city || 'Bengaluru';
+      document.getElementById('prof-ward').textContent = user.ward || 'Indiranagar';
+      document.getElementById('prof-member-since').textContent = Utils.formatDate(user.memberSince);
+      document.getElementById('prof-impact-score').textContent = user.impactScore || 340;
+      if (user.avatar) document.getElementById('prof-avatar').src = user.avatar;
+
+      // Populate modal inputs
+      document.getElementById('edit-name').value = user.name;
+      document.getElementById('edit-phone').value = user.phone || '';
+      document.getElementById('edit-ward').value = user.ward || '';
+
+      // Render Badges
+      const badges = PriorityEngine.evaluateCitizenBadges(user, complaints);
+      const unlockedCount = badges.filter(b => b.unlocked).length;
+      document.getElementById('badge-count-text').textContent = `${unlockedCount} of ${badges.length} Unlocked`;
+
+      const badgesContainer = document.getElementById('badges-container');
+      badgesContainer.innerHTML = badges.map(b => `
+        <div class="badge-tile ${b.unlocked ? '' : 'locked'}">
+          <div class="badge-tile-icon">${b.icon}</div>
+          <div class="badge-tile-title">${b.name}</div>
+          <div class="badge-tile-desc">${b.desc}</div>
+          <span class="badge ${b.unlocked ? 'badge-success' : 'badge-neutral'} mt-1">
+            ${b.unlocked ? 'UNLOCKED' : 'LOCKED'}
+          </span>
+        </div>
+      `).join('');
+
+      // Save profile updates
+      document.getElementById('btn-save-profile').addEventListener('click', () => {
+        user.name = document.getElementById('edit-name').value.trim() || user.name;
+        user.phone = document.getElementById('edit-phone').value.trim() || user.phone;
+        user.ward = document.getElementById('edit-ward').value.trim() || user.ward;
+
+        Storage.set(STORAGE_KEYS.CURRENT_USER, user);
+        const users = Storage.get(STORAGE_KEYS.USERS, []);
+        const updatedUsers = users.map(u => (u.id === user.id ? user : u));
+        Storage.set(STORAGE_KEYS.USERS, updatedUsers);
+
+        UI.closeModal('edit-profile-modal');
+        UI.showToast({ type: 'success', title: 'Profile Updated', message: 'Your changes have been saved.' });
+        setTimeout(() => window.location.reload(), 600);
+      });
+    });
+  </script>
+</body>
+</html>

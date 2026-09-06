@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Field Worker Squad Portal — JanSetu 🇮🇳</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+
+  <!-- Top Navbar -->
+  <header class="top-navbar">
+    <div class="d-flex align-center gap-2">
+      <button class="mobile-nav-toggle" id="mobile-sidebar-toggle">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+      <a href="index.html" class="brand-logo">
+        <span class="flag-badge">🇮🇳</span>
+        <span>JAN<span class="logo-accent">SETU</span></span>
+      </a>
+      <span class="badge badge-warning" style="margin-left: 0.5rem; color: #000; font-weight: 800;">FIELD SQUAD</span>
+    </div>
+
+    <div class="nav-actions">
+      <a href="notifications.html" class="icon-btn" aria-label="Notifications">
+        <i class="fa-regular fa-bell"></i>
+        <span class="icon-badge notification-badge-count" style="display: none;">0</span>
+      </a>
+      <button class="icon-btn" id="theme-toggle-btn" aria-label="Toggle Theme">
+        <i class="fa-regular fa-sun"></i>
+      </button>
+      <div id="nav-user-container"></div>
+    </div>
+  </header>
+
+  <!-- App Layout -->
+  <div class="app-layout">
+    <aside class="sidebar">
+      <div class="sidebar-heading">Field Squad Operations</div>
+      <ul class="sidebar-nav">
+        <li>
+          <a href="worker-dashboard.html" class="sidebar-link active">
+            <i class="fa-solid fa-helmet-safety"></i> <span>Squad Tasks</span>
+          </a>
+        </li>
+        <li>
+          <a href="worker-issues.html" class="sidebar-link">
+            <i class="fa-solid fa-list-check"></i> <span>Assigned Work Orders</span>
+          </a>
+        </li>
+        <li>
+          <a href="notifications.html" class="sidebar-link">
+            <i class="fa-solid fa-bell"></i> <span>Notifications</span>
+          </a>
+        </li>
+      </ul>
+      <div class="sidebar-footer">
+        <a href="javascript:void(0)" onclick="Auth.logout()" class="sidebar-link text-danger">
+          <i class="fa-solid fa-right-from-bracket"></i> <span>Sign Out</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="dashboard-header">
+        <div>
+          <h1>Ward 150 Field Squad Work Orders</h1>
+          <p class="text-muted">Review dispatched repair assignments, record ground progress, and upload resolution proof.</p>
+        </div>
+      </div>
+
+      <!-- KPI Summary Cards -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-info">
+            <h3>Active Assigned</h3>
+            <div class="kpi-number" id="worker-kpi-active">0</div>
+            <div class="kpi-trend negative"><i class="fa-solid fa-clock"></i> In queue</div>
+          </div>
+          <div class="kpi-icon kpi-icon-amber"><i class="fa-solid fa-clipboard-list"></i></div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-info">
+            <h3>In Progress</h3>
+            <div class="kpi-number" id="worker-kpi-progress">0</div>
+            <div class="kpi-trend positive"><i class="fa-solid fa-person-digging"></i> Crew on site</div>
+          </div>
+          <div class="kpi-icon kpi-icon-purple"><i class="fa-solid fa-wrench"></i></div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-info">
+            <h3>Completed Resolutions</h3>
+            <div class="kpi-number" id="worker-kpi-resolved">42</div>
+            <div class="kpi-trend positive"><i class="fa-solid fa-circle-check"></i> Audited proof</div>
+          </div>
+          <div class="kpi-icon kpi-icon-emerald"><i class="fa-solid fa-shield-halved"></i></div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-info">
+            <h3>Citizen Rating</h3>
+            <div class="kpi-number">4.8 ★</div>
+            <div class="kpi-trend positive"><i class="fa-solid fa-award"></i> Top Ward Crew</div>
+          </div>
+          <div class="kpi-icon kpi-icon-rose"><i class="fa-solid fa-star"></i></div>
+        </div>
+      </div>
+
+      <!-- Assigned Tasks Table -->
+      <div class="card">
+        <div class="d-flex justify-between align-center mb-3">
+          <h3 style="font-size: 1.15rem; font-weight: 700;">Assigned Civic Work Orders</h3>
+          <a href="worker-issues.html" class="btn btn-secondary btn-sm">Full Work Order List &rarr;</a>
+        </div>
+
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Work Order ID</th>
+                <th>Civic Defect Summary</th>
+                <th>Category</th>
+                <th>Priority Score</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="worker-tasks-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/utils.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/notifications.js"></script>
+  <script src="js/priority.js"></script>
+  <script src="js/complaints.js"></script>
+  <script src="js/emailService.js"></script>
+  <script src="js/worker.js"></script>
+  <script src="js/ui.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!Auth.requireAuth(['worker'])) return;
+      Worker.initDashboard();
+    });
+  </script>
+</body>
+</html>

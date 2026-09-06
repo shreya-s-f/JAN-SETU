@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Execute Work Order — JanSetu Field Squad 🇮🇳</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+
+  <!-- Top Navbar -->
+  <header class="top-navbar">
+    <div class="d-flex align-center gap-2">
+      <button class="mobile-nav-toggle" id="mobile-sidebar-toggle">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+      <a href="index.html" class="brand-logo">
+        <span class="flag-badge">🇮🇳</span>
+        <span>JAN<span class="logo-accent">SETU</span></span>
+      </a>
+      <span class="badge badge-warning" style="margin-left: 0.5rem; color: #000; font-weight: 800;">FIELD SQUAD</span>
+    </div>
+
+    <div class="nav-actions">
+      <a href="notifications.html" class="icon-btn" aria-label="Notifications">
+        <i class="fa-regular fa-bell"></i>
+        <span class="icon-badge notification-badge-count" style="display: none;">0</span>
+      </a>
+      <button class="icon-btn" id="theme-toggle-btn" aria-label="Toggle Theme">
+        <i class="fa-regular fa-sun"></i>
+      </button>
+      <div id="nav-user-container"></div>
+    </div>
+  </header>
+
+  <!-- App Layout -->
+  <div class="app-layout">
+    <aside class="sidebar">
+      <div class="sidebar-heading">Field Squad Operations</div>
+      <ul class="sidebar-nav">
+        <li>
+          <a href="worker-dashboard.html" class="sidebar-link">
+            <i class="fa-solid fa-helmet-safety"></i> <span>Squad Tasks</span>
+          </a>
+        </li>
+        <li>
+          <a href="worker-issues.html" class="sidebar-link active">
+            <i class="fa-solid fa-list-check"></i> <span>Assigned Work Orders</span>
+          </a>
+        </li>
+        <li>
+          <a href="notifications.html" class="sidebar-link">
+            <i class="fa-solid fa-bell"></i> <span>Notifications</span>
+          </a>
+        </li>
+      </ul>
+      <div class="sidebar-footer">
+        <a href="javascript:void(0)" onclick="Auth.logout()" class="sidebar-link text-danger">
+          <i class="fa-solid fa-right-from-bracket"></i> <span>Sign Out</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="dashboard-header">
+        <div>
+          <div class="d-flex align-center gap-2 mb-1">
+            <span class="badge badge-primary" id="exec-issue-id">JS-2026-000000</span>
+            <span id="exec-status-pill" class="status-pill status-assigned">ASSIGNED</span>
+          </div>
+          <h1 id="exec-issue-title" style="font-size: 1.6rem;">Work Order Execution</h1>
+        </div>
+        <div class="dashboard-actions">
+          <button class="btn btn-warning" id="btn-start-work" onclick="Worker.startWork()">
+            <i class="fa-solid fa-play"></i> Start Ground Work
+          </button>
+        </div>
+      </div>
+
+      <!-- Execution Two-Column Layout -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+        <!-- Left Column: Defect Information & Site Coordinates -->
+        <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+          <!-- Defect Photo Card -->
+          <div class="card">
+            <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.75rem;">Original Defect Evidence</h3>
+            <img id="exec-before-image" src="" alt="Defect Before" style="width: 100%; height: 260px; object-fit: cover; border-radius: var(--radius-md);">
+          </div>
+
+          <!-- Defect Details Card -->
+          <div class="card">
+            <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.75rem;">Reported Defect Specifications</h3>
+            <p id="exec-issue-desc" class="text-muted" style="line-height: 1.6; margin-bottom: 1rem;"></p>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-color); font-size: 0.88rem;">
+              <div>
+                <span class="text-muted" style="font-size: 0.75rem; text-transform: uppercase;">CATEGORY</span>
+                <div id="exec-issue-category" style="font-weight: 700;"></div>
+              </div>
+              <div>
+                <span class="text-muted" style="font-size: 0.75rem; text-transform: uppercase;">PRIORITY LEVEL</span>
+                <div id="exec-issue-priority" style="font-weight: 700;"></div>
+              </div>
+            </div>
+
+            <div style="margin-top: 1rem; font-size: 0.88rem;">
+              <span class="text-muted" style="font-size: 0.75rem; text-transform: uppercase;">LOCATION / LANDMARK</span>
+              <div id="exec-issue-location" style="font-weight: 600;"></div>
+            </div>
+          </div>
+
+          <!-- GPS Coordinates Mini Map -->
+          <div class="card">
+            <h4 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 0.5rem;"><i class="fa-solid fa-location-dot text-primary"></i> Site GPS Map</h4>
+            <div id="exec-map" style="height: 180px; border-radius: var(--radius-sm); border: 1px solid var(--border-color);"></div>
+          </div>
+        </div>
+
+        <!-- Right Column: Resolution Form & After-Photo Upload -->
+        <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+          <div class="card" style="border-top: 4px solid var(--success);">
+            <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem;">
+              <i class="fa-solid fa-camera text-success"></i> Upload "After" Resolution Proof
+            </h3>
+            <p class="text-muted mb-4" style="font-size: 0.88rem;">
+              A verified "After" photograph is mandatory to close this municipal work order and notify citizens.
+            </p>
+
+            <!-- After-Image Dropzone -->
+            <div class="image-upload-dropzone mb-3" id="after-image-dropzone">
+              <input type="file" id="after-image-file" accept="image/*" style="display: none;">
+              <div class="dropzone-placeholder">
+                <i class="fa-solid fa-camera" style="font-size: 2.2rem; color: var(--success); margin-bottom: 0.75rem;"></i>
+                <h4>Click or Drop "After" Image Here</h4>
+                <p class="text-muted mt-1" style="font-size: 0.8rem;">Upload completed repair photo proof</p>
+              </div>
+              <img id="after-image-preview" class="upload-preview-img" alt="After Resolution Proof">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="resolution-notes">Resolution Work Details <span class="required">*</span></label>
+              <textarea id="resolution-notes" class="form-control" rows="4" placeholder="Detail the technical repair completed (e.g. 50mm bitumen mix compacted with roller; water line welded with new valve; garbage sanitized with bleaching powder)..."></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="citizens-benefited">Estimated Citizens Benefited</label>
+              <input type="number" id="citizens-benefited" class="form-control" value="250" min="1">
+              <div class="form-hint">Estimated residents or commuters using this repaired infrastructure daily.</div>
+            </div>
+
+            <button type="button" class="btn btn-success btn-block btn-lg mt-3" onclick="Worker.markResolved()">
+              <i class="fa-solid fa-circle-check"></i> Submit Proof & Mark Resolved
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/notifications.js"></script>
+  <script src="js/priority.js"></script>
+  <script src="js/complaints.js"></script>
+  <script src="js/emailService.js"></script>
+  <script src="js/worker.js"></script>
+  <script src="js/ui.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!Auth.requireAuth(['worker', 'admin'])) return;
+      const params = new URLSearchParams(window.location.search);
+      const issueId = params.get('id') || 'JS-2026-001245';
+      Worker.initIssueExecution(issueId);
+    });
+  </script>
+</body>
+</html>

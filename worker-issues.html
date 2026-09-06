@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Assigned Work Orders — JanSetu Field Squad 🇮🇳</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+
+  <!-- Top Navbar -->
+  <header class="top-navbar">
+    <div class="d-flex align-center gap-2">
+      <button class="mobile-nav-toggle" id="mobile-sidebar-toggle">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+      <a href="index.html" class="brand-logo">
+        <span class="flag-badge">🇮🇳</span>
+        <span>JAN<span class="logo-accent">SETU</span></span>
+      </a>
+      <span class="badge badge-warning" style="margin-left: 0.5rem; color: #000; font-weight: 800;">FIELD SQUAD</span>
+    </div>
+
+    <div class="nav-actions">
+      <button class="icon-btn" id="theme-toggle-btn" aria-label="Toggle Theme">
+        <i class="fa-regular fa-sun"></i>
+      </button>
+      <div id="nav-user-container"></div>
+    </div>
+  </header>
+
+  <!-- App Layout -->
+  <div class="app-layout">
+    <aside class="sidebar">
+      <div class="sidebar-heading">Field Squad Operations</div>
+      <ul class="sidebar-nav">
+        <li>
+          <a href="worker-dashboard.html" class="sidebar-link">
+            <i class="fa-solid fa-helmet-safety"></i> <span>Squad Tasks</span>
+          </a>
+        </li>
+        <li>
+          <a href="worker-issues.html" class="sidebar-link active">
+            <i class="fa-solid fa-list-check"></i> <span>Assigned Work Orders</span>
+          </a>
+        </li>
+        <li>
+          <a href="notifications.html" class="sidebar-link">
+            <i class="fa-solid fa-bell"></i> <span>Notifications</span>
+          </a>
+        </li>
+      </ul>
+      <div class="sidebar-footer">
+        <a href="javascript:void(0)" onclick="Auth.logout()" class="sidebar-link text-danger">
+          <i class="fa-solid fa-right-from-bracket"></i> <span>Sign Out</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="dashboard-header">
+        <div>
+          <h1>Assigned Municipal Work Orders</h1>
+          <p class="text-muted">Filtered queue of field orders assigned to your ward squad.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Defect Details</th>
+                <th>Category</th>
+                <th>Civic Score</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="worker-tasks-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/utils.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/notifications.js"></script>
+  <script src="js/priority.js"></script>
+  <script src="js/complaints.js"></script>
+  <script src="js/emailService.js"></script>
+  <script src="js/worker.js"></script>
+  <script src="js/ui.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!Auth.requireAuth(['worker'])) return;
+      Worker.initDashboard();
+    });
+  </script>
+</body>
+</html>

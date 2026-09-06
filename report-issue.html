@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Report Civic Issue — JanSetu 🇮🇳</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+
+  <!-- Top Navbar -->
+  <header class="top-navbar">
+    <div class="d-flex align-center gap-2">
+      <button class="mobile-nav-toggle" id="mobile-sidebar-toggle">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+      <a href="index.html" class="brand-logo">
+        <span class="flag-badge">🇮🇳</span>
+        <span>JAN<span class="logo-accent">SETU</span></span>
+      </a>
+    </div>
+
+    <div class="nav-actions">
+      <a href="notifications.html" class="icon-btn" aria-label="Notifications">
+        <i class="fa-regular fa-bell"></i>
+        <span class="icon-badge notification-badge-count" style="display: none;">0</span>
+      </a>
+      <button class="icon-btn" id="theme-toggle-btn" aria-label="Toggle Theme">
+        <i class="fa-regular fa-sun"></i>
+      </button>
+      <div id="nav-user-container"></div>
+    </div>
+  </header>
+
+  <!-- App Layout -->
+  <div class="app-layout">
+    <aside class="sidebar">
+      <div class="sidebar-heading">Citizen Portal</div>
+      <ul class="sidebar-nav">
+        <li>
+          <a href="citizen-dashboard.html" class="sidebar-link">
+            <i class="fa-solid fa-gauge"></i> <span>Dashboard</span>
+          </a>
+        </li>
+        <li>
+          <a href="report-issue.html" class="sidebar-link active">
+            <i class="fa-solid fa-circle-plus"></i> <span>Report Issue</span>
+          </a>
+        </li>
+        <li>
+          <a href="my-complaints.html" class="sidebar-link">
+            <i class="fa-solid fa-list-check"></i> <span>My Complaints</span>
+          </a>
+        </li>
+        <li>
+          <a href="explore-issues.html" class="sidebar-link">
+            <i class="fa-solid fa-map-location-dot"></i> <span>Explore Issues</span>
+          </a>
+        </li>
+        <li>
+          <a href="notifications.html" class="sidebar-link">
+            <i class="fa-solid fa-bell"></i> <span>Notifications</span>
+          </a>
+        </li>
+        <li>
+          <a href="profile.html" class="sidebar-link">
+            <i class="fa-solid fa-user-shield"></i> <span>Civic Profile</span>
+          </a>
+        </li>
+        <li>
+          <a href="settings.html" class="sidebar-link">
+            <i class="fa-solid fa-sliders"></i> <span>Settings</span>
+          </a>
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <a href="javascript:void(0)" onclick="Auth.logout()" class="sidebar-link text-danger">
+          <i class="fa-solid fa-right-from-bracket"></i> <span>Sign Out</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Content Body -->
+    <main class="main-content">
+      <div class="dashboard-header">
+        <div>
+          <h1>Report a Civic Problem</h1>
+          <p class="text-muted">Submit an authenticated report to notify municipal authorities and alert your neighbors.</p>
+        </div>
+        <a href="citizen-dashboard.html" class="btn btn-secondary">
+          <i class="fa-solid fa-xmark"></i> Cancel
+        </a>
+      </div>
+
+      <!-- Duplicate / Existing Issue Alert Banner -->
+      <div id="duplicate-alert-box" class="duplicate-alert-banner"></div>
+
+      <!-- Multi-step Form Card Container -->
+      <div class="card" style="max-width: 860px; margin: 0 auto; padding: 2rem;">
+        <!-- Wizard Step Nodes Progress Header -->
+        <div class="wizard-progress">
+          <div class="wizard-step-node active">
+            <div class="step-circle">1</div>
+            <div class="step-label">Category</div>
+          </div>
+          <div class="wizard-step-node">
+            <div class="step-circle">2</div>
+            <div class="step-label">Details</div>
+          </div>
+          <div class="wizard-step-node">
+            <div class="step-circle">3</div>
+            <div class="step-label">Photo</div>
+          </div>
+          <div class="wizard-step-node">
+            <div class="step-circle">4</div>
+            <div class="step-label">Location</div>
+          </div>
+          <div class="wizard-step-node">
+            <div class="step-circle">5</div>
+            <div class="step-label">Impact</div>
+          </div>
+          <div class="wizard-step-node">
+            <div class="step-circle">6</div>
+            <div class="step-label">Priority</div>
+          </div>
+          <div class="wizard-step-node">
+            <div class="step-circle">7</div>
+            <div class="step-label">Review</div>
+          </div>
+        </div>
+
+        <!-- STEP 1: Select Category -->
+        <div class="wizard-pane active" id="wizard-step-1">
+          <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem;">Step 1: Select Problem Category</h3>
+          <p class="text-muted mb-4" style="font-size: 0.9rem;">Choose the civic division that best matches the issue on the ground.</p>
+
+          <div class="category-select-grid">
+            <div class="category-card-option" data-category="Roads/Potholes">
+              <i class="fa-solid fa-road"></i>
+              <span>Roads/Potholes</span>
+            </div>
+            <div class="category-card-option" data-category="Garbage">
+              <i class="fa-solid fa-trash-can"></i>
+              <span>Garbage & Waste</span>
+            </div>
+            <div class="category-card-option" data-category="Streetlights">
+              <i class="fa-solid fa-lightbulb"></i>
+              <span>Streetlights</span>
+            </div>
+            <div class="category-card-option" data-category="Water Supply">
+              <i class="fa-solid fa-faucet-drip"></i>
+              <span>Water Supply</span>
+            </div>
+            <div class="category-card-option" data-category="Drainage/Flooding">
+              <i class="fa-solid fa-water"></i>
+              <span>Drainage/Flooding</span>
+            </div>
+            <div class="category-card-option" data-category="Traffic Signals">
+              <i class="fa-solid fa-traffic-light"></i>
+              <span>Traffic Signals</span>
+            </div>
+            <div class="category-card-option" data-category="Public Toilets">
+              <i class="fa-solid fa-restroom"></i>
+              <span>Public Toilets</span>
+            </div>
+            <div class="category-card-option" data-category="Parks">
+              <i class="fa-solid fa-tree"></i>
+              <span>Parks & Gardens</span>
+            </div>
+            <div class="category-card-option" data-category="Public Transport">
+              <i class="fa-solid fa-bus"></i>
+              <span>Public Transport</span>
+            </div>
+            <div class="category-card-option" data-category="Stray Animals">
+              <i class="fa-solid fa-dog"></i>
+              <span>Stray Animals</span>
+            </div>
+            <div class="category-card-option" data-category="Illegal Dumping">
+              <i class="fa-solid fa-truck-ramp-box"></i>
+              <span>Illegal Dumping</span>
+            </div>
+            <div class="category-card-option" data-category="Damaged Infrastructure">
+              <i class="fa-solid fa-bridge-water"></i>
+              <span>Infrastructure</span>
+            </div>
+          </div>
+
+          <div class="d-flex justify-between mt-4">
+            <div></div>
+            <button class="btn btn-primary" onclick="Citizen.nextStep()">
+              Continue to Details <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- STEP 2: Issue Title & Description -->
+        <div class="wizard-pane" id="wizard-step-2">
+          <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem;">Step 2: Describe the Problem</h3>
+          <p class="text-muted mb-4" style="font-size: 0.9rem;">Provide a clear summary and specific visual cues for the field crew.</p>
+
+          <div class="form-group">
+            <label class="form-label" for="issue-title">Issue Title <span class="required">*</span></label>
+            <input type="text" id="issue-title" class="form-control" placeholder="e.g. Dangerous deep pothole after 12th Main junction">
+            <div class="form-hint">Be concise and describe the primary defect clearly.</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="issue-desc">Detailed Description <span class="required">*</span></label>
+            <textarea id="issue-desc" class="form-control" rows="5" placeholder="Explain the severity, risk to two-wheelers/pedestrians, nearby prominent shops/landmarks, and how long this has been unresolved..."></textarea>
+          </div>
+
+          <div class="d-flex justify-between mt-4">
+            <button class="btn btn-secondary" onclick="Citizen.prevStep()">
+              <i class="fa-solid fa-arrow-left"></i> Back
+            </button>
+            <button class="btn btn-primary" onclick="Citizen.nextStep()">
+              Continue to Photo <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- STEP 3: Photo Upload -->
+        <div class="wizard-pane" id="wizard-step-3">
+          <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem;">Step 3: Upload Photo Proof</h3>
+          <p class="text-muted mb-4" style="font-size: 0.9rem;">Authentic photos speed up municipal verification by 3x.</p>
+
+          <div class="image-upload-dropzone" id="image-dropzone">
+            <input type="file" id="issue-image-file" accept="image/*" style="display: none;">
+            <div class="dropzone-placeholder">
+              <i class="fa-solid fa-cloud-arrow-up" style="font-size: 2.5rem; color: var(--primary); margin-bottom: 1rem;"></i>
+              <h4>Click or Drag & Drop Photo Here</h4>
+              <p class="text-muted mt-1" style="font-size: 0.85rem;">PNG, JPG, JPEG up to 10MB</p>
+            </div>
+            <img id="image-preview" class="upload-preview-img" alt="Uploaded Issue Proof">
+          </div>
+
+          <div class="d-flex justify-between mt-4">
+            <button class="btn btn-secondary" onclick="Citizen.prevStep()">
+              <i class="fa-solid fa-arrow-left"></i> Back
+            </button>
+            <button class="btn btn-primary" onclick="Citizen.nextStep()">
+              Continue to Location <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- STEP 4: Location -->
+        <div class="wizard-pane" id="wizard-step-4">
+          <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem;">Step 4: Location & GPS Coordinates</h3>
+          <p class="text-muted mb-4" style="font-size: 0.9rem;">Pinpoint the exact location for field squad routing.</p>
+
+          <div style="background: var(--bg-surface-elevated); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.25rem; margin-bottom: 1.5rem; text-align: center;">
+            <p style="font-size: 0.9rem; margin-bottom: 1rem;">Use HTML5 Geolocation to automatically read coordinates from your device:</p>
+            <button type="button" class="btn btn-outline" id="btn-get-geolocation">
+              <i class="fa-solid fa-location-crosshairs"></i> Use My Current Location
+            </button>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+              <label class="form-label" for="issue-area">Locality / Ward <span class="required">*</span></label>
+              <input type="text" id="issue-area" class="form-control" value="Indiranagar" placeholder="e.g. Indiranagar Ward 150">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="issue-city">City <span class="required">*</span></label>
+              <input type="text" id="issue-city" class="form-control" value="Bengaluru" readonly style="opacity: 0.7;">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="issue-address">Street Address / Landmark <span class="required">*</span></label>
+            <input type="text" id="issue-address" class="form-control" placeholder="e.g. Opposite BDA Complex, 12th Main Road">
+          </div>
+
+          <div class="d-flex justify-between mt-4">
+            <button class="btn btn-secondary" onclick="Citizen.prevStep()">
+              <i class="fa-solid fa-arrow-left"></i> Back
+            </button>
+            <button class="btn btn-primary" onclick="Citizen.nextStep()">
+              Continue to Impact <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- STEP 5: People Affected -->
+        <div class="wizard-pane" id="wizard-step-5">
+          <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem;">Step 5: Estimated Population Affected</h3>
+          <p class="text-muted mb-4" style="font-size: 0.9rem;">Helps calculate the Civic Priority Score and determine response urgency.</p>
+
+          <div class="form-group">
+            <label class="form-label">How many citizens are affected daily by this defect?</label>
+            <select id="issue-people-affected" class="form-control" style="font-size: 1.05rem; padding: 0.85rem;">
+              <option value="Only me">Only me (Individual domestic connection)</option>
+              <option value="2–10">2–10 (Immediate household neighbors)</option>
+              <option value="10–50">10–50 (Apartment building or small cross lane)</option>
+              <option value="50–100" selected>50–100 (Residential street or commercial block)</option>
+              <option value="100–500">100–500 (Major throughway or primary school zone)</option>
+              <option value="500+">500+ (Critical arterial junction or transit corridor)</option>
+            </select>
+          </div>
+
+          <div class="d-flex justify-between mt-4">
+            <button class="btn btn-secondary" onclick="Citizen.prevStep()">
+              <i class="fa-solid fa-arrow-left"></i> Back
+            </button>
+            <button class="btn btn-primary" onclick="Citizen.nextStep()">
+              Continue to Priority <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- STEP 6: Priority -->
+        <div class="wizard-pane" id="wizard-step-6">
+          <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem;">Step 6: Reporter's Urgency Assessment</h3>
+          <p class="text-muted mb-4" style="font-size: 0.9rem;">Declare the immediate danger level to life, property, or traffic.</p>
+
+          <div style="display: flex; flex-direction: column; gap: 0.85rem;">
+            <label style="display: flex; align-items: center; gap: 1rem; padding: 1rem; border-radius: var(--radius-md); background: var(--bg-surface-elevated); border: 1px solid var(--border-color); cursor: pointer;">
+              <input type="radio" name="priority-radio" value="low">
+              <div>
+                <strong>Low Priority</strong>
+                <div class="text-muted" style="font-size: 0.8rem;">Cosmetic defects, minor scratches, non-hazardous</div>
+              </div>
+            </label>
+
+            <label style="display: flex; align-items: center; gap: 1rem; padding: 1rem; border-radius: var(--radius-md); background: var(--bg-surface-elevated); border: 1px solid var(--border-color); cursor: pointer;">
+              <input type="radio" name="priority-radio" value="medium" checked>
+              <div>
+                <strong>Medium Priority</strong>
+                <div class="text-muted" style="font-size: 0.8rem;">Causes civic inconvenience, needs attention within 48-72 hours</div>
+              </div>
+            </label>
+
+            <label style="display: flex; align-items: center; gap: 1rem; padding: 1rem; border-radius: var(--radius-md); background: var(--bg-surface-elevated); border: 1px solid var(--border-color); cursor: pointer;">
+              <input type="radio" name="priority-radio" value="high">
+              <div>
+                <strong>High Priority</strong>
+                <div class="text-muted" style="font-size: 0.8rem;">Impairs safe movement, major water leak, dark accident blackspot</div>
+              </div>
+            </label>
+
+            <label style="display: flex; align-items: center; gap: 1rem; padding: 1rem; border-radius: var(--radius-md); background: var(--bg-surface-elevated); border: 1px solid rgba(239, 68, 68, 0.4); cursor: pointer;">
+              <input type="radio" name="priority-radio" value="emergency">
+              <div>
+                <strong class="text-danger"><i class="fa-solid fa-triangle-exclamation"></i> Emergency Hazard</strong>
+                <div class="text-muted" style="font-size: 0.8rem;">Immediate risk to life, open live power cable, open stormwater manhole</div>
+              </div>
+            </label>
+          </div>
+
+          <div class="d-flex justify-between mt-4">
+            <button class="btn btn-secondary" onclick="Citizen.prevStep()">
+              <i class="fa-solid fa-arrow-left"></i> Back
+            </button>
+            <button class="btn btn-primary" onclick="Citizen.nextStep()">
+              Review & Verify <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- STEP 7: Review & Submit -->
+        <div class="wizard-pane" id="wizard-step-7">
+          <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem;">Step 7: Final Review & Submission</h3>
+          <p class="text-muted mb-4" style="font-size: 0.9rem;">Confirm all details before logging into the municipal queue.</p>
+
+          <div id="review-summary-content" style="background: var(--bg-surface-elevated); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.5rem; margin-bottom: 1.5rem;"></div>
+
+          <div class="d-flex justify-between mt-4">
+            <button class="btn btn-secondary" onclick="Citizen.prevStep()">
+              <i class="fa-solid fa-arrow-left"></i> Edit Details
+            </button>
+            <button class="btn btn-primary btn-lg" id="btn-submit-complaint" onclick="Citizen.submitComplaint()">
+              <i class="fa-solid fa-paper-plane"></i> Submit Complaint (+20 Points)
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/utils.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/notifications.js"></script>
+  <script src="js/priority.js"></script>
+  <script src="js/complaints.js"></script>
+  <script src="js/emailService.js"></script>
+  <script src="js/citizen.js"></script>
+  <script src="js/ui.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!Auth.requireAuth(['citizen'])) return;
+      Citizen.initReportWizard();
+    });
+  </script>
+</body>
+</html>

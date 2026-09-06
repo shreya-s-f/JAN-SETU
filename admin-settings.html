@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal Configuration — JanSetu Admin 🇮🇳</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+
+  <!-- Top Navbar -->
+  <header class="top-navbar">
+    <div class="d-flex align-center gap-2">
+      <button class="mobile-nav-toggle" id="mobile-sidebar-toggle">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+      <a href="index.html" class="brand-logo">
+        <span class="flag-badge">🇮🇳</span>
+        <span>JAN<span class="logo-accent">SETU</span></span>
+      </a>
+      <span class="badge badge-primary" style="margin-left: 0.5rem;">ADMIN DESK</span>
+    </div>
+
+    <div class="nav-actions">
+      <button class="icon-btn" id="theme-toggle-btn" aria-label="Toggle Theme">
+        <i class="fa-regular fa-sun"></i>
+      </button>
+      <div id="nav-user-container"></div>
+    </div>
+  </header>
+
+  <!-- App Layout -->
+  <div class="app-layout">
+    <aside class="sidebar">
+      <div class="sidebar-heading">Municipal Administration</div>
+      <ul class="sidebar-nav">
+        <li>
+          <a href="admin-dashboard.html" class="sidebar-link">
+            <i class="fa-solid fa-gauge-high"></i> <span>Overview</span>
+          </a>
+        </li>
+        <li>
+          <a href="admin-complaints.html" class="sidebar-link">
+            <i class="fa-solid fa-folder-open"></i> <span>All Complaints</span>
+          </a>
+        </li>
+        <li>
+          <a href="admin-users.html" class="sidebar-link">
+            <i class="fa-solid fa-users"></i> <span>Citizen Registry</span>
+          </a>
+        </li>
+        <li>
+          <a href="admin-workers.html" class="sidebar-link">
+            <i class="fa-solid fa-helmet-safety"></i> <span>Field Squads</span>
+          </a>
+        </li>
+        <li>
+          <a href="admin-departments.html" class="sidebar-link">
+            <i class="fa-solid fa-building-columns"></i> <span>Departments</span>
+          </a>
+        </li>
+        <li>
+          <a href="admin-analytics.html" class="sidebar-link">
+            <i class="fa-solid fa-chart-line"></i> <span>Analytics</span>
+          </a>
+        </li>
+        <li>
+          <a href="admin-map.html" class="sidebar-link">
+            <i class="fa-solid fa-map-location-dot"></i> <span>City Map & Heatmap</span>
+          </a>
+        </li>
+        <li>
+          <a href="admin-notifications.html" class="sidebar-link">
+            <i class="fa-solid fa-bullhorn"></i> <span>Civic Broadcasts</span>
+          </a>
+        </li>
+        <li>
+          <a href="admin-email-logs.html" class="sidebar-link">
+            <i class="fa-solid fa-envelope-circle-check"></i> <span>Email Audit Logs</span>
+          </a>
+        </li>
+        <li>
+          <a href="admin-settings.html" class="sidebar-link active">
+            <i class="fa-solid fa-gear"></i> <span>Portal Settings</span>
+          </a>
+        </li>
+      </ul>
+      <div class="sidebar-footer">
+        <a href="javascript:void(0)" onclick="Auth.logout()" class="sidebar-link text-danger">
+          <i class="fa-solid fa-right-from-bracket"></i> <span>Sign Out</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="dashboard-header">
+        <div>
+          <h1>Portal Configuration & Maintenance</h1>
+          <p class="text-muted">Manage Civic Priority scoring parameters, SLA deadlines, and demo environment reset.</p>
+        </div>
+      </div>
+
+      <div class="card" style="max-width: 800px; margin: 0 auto; padding: 2rem;">
+        <!-- Civic Scoring Parameters -->
+        <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 1rem;">
+          <i class="fa-solid fa-sliders text-primary"></i> Algorithm Weight Configuration
+        </h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem;">
+          <div class="form-group">
+            <label class="form-label">Category Base Weight</label>
+            <input type="text" class="form-control" value="30% (Severe life/infrastructure risks)" readonly>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Affected Population Factor</label>
+            <input type="text" class="form-control" value="25% (Scale 1 to 500+ citizens)" readonly>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Community Verification / Upvotes</label>
+            <input type="text" class="form-control" value="15% (+1 pt per 10 verified upvotes)" readonly>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Age Escalation Penalty</label>
+            <input type="text" class="form-control" value="15% (+3 pts per overdue 24h)" readonly>
+          </div>
+        </div>
+
+        <!-- SLA Deadlines -->
+        <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 1rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
+          <i class="fa-solid fa-clock text-warning"></i> Service Level Agreements (SLAs)
+        </h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem;">
+          <div class="form-group">
+            <label class="form-label">Critical Severity SLA</label>
+            <input type="text" class="form-control" value="12 Hours (Dispatch requirement)">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Standard Civic SLA</label>
+            <input type="text" class="form-control" value="48 Hours (Resolution deadline)">
+          </div>
+        </div>
+
+        <!-- Demo Data Reset Zone -->
+        <div style="border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
+          <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--danger); margin-bottom: 0.5rem;">
+            <i class="fa-solid fa-triangle-exclamation"></i> Demonstration Environment Reset
+          </h3>
+          <p class="text-muted" style="font-size: 0.88rem; margin-bottom: 1.25rem;">
+            Restores localStorage to pristine demo state with 22 initial complaints, seed field workers, and original notifications.
+          </p>
+          <button type="button" class="btn btn-danger" onclick="Admin.triggerResetDemoData()">
+            <i class="fa-solid fa-rotate-left"></i> Reset All Demo Data to Default
+          </button>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/utils.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/notifications.js"></script>
+  <script src="js/priority.js"></script>
+  <script src="js/complaints.js"></script>
+  <script src="js/emailService.js"></script>
+  <script src="js/admin.js"></script>
+  <script src="js/ui.js"></script>
+</body>
+</html>

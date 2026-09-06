@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Reported Complaints — JanSetu 🇮🇳</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+
+  <!-- Top Navbar -->
+  <header class="top-navbar">
+    <div class="d-flex align-center gap-2">
+      <button class="mobile-nav-toggle" id="mobile-sidebar-toggle">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+      <a href="index.html" class="brand-logo">
+        <span class="flag-badge">🇮🇳</span>
+        <span>JAN<span class="logo-accent">SETU</span></span>
+      </a>
+    </div>
+
+    <div class="nav-actions">
+      <a href="notifications.html" class="icon-btn" aria-label="Notifications">
+        <i class="fa-regular fa-bell"></i>
+        <span class="icon-badge notification-badge-count" style="display: none;">0</span>
+      </a>
+      <button class="icon-btn" id="theme-toggle-btn" aria-label="Toggle Theme">
+        <i class="fa-regular fa-sun"></i>
+      </button>
+      <div id="nav-user-container"></div>
+    </div>
+  </header>
+
+  <!-- App Layout -->
+  <div class="app-layout">
+    <aside class="sidebar">
+      <div class="sidebar-heading">Citizen Portal</div>
+      <ul class="sidebar-nav">
+        <li>
+          <a href="citizen-dashboard.html" class="sidebar-link">
+            <i class="fa-solid fa-gauge"></i> <span>Dashboard</span>
+          </a>
+        </li>
+        <li>
+          <a href="report-issue.html" class="sidebar-link">
+            <i class="fa-solid fa-circle-plus"></i> <span>Report Issue</span>
+          </a>
+        </li>
+        <li>
+          <a href="my-complaints.html" class="sidebar-link active">
+            <i class="fa-solid fa-list-check"></i> <span>My Complaints</span>
+          </a>
+        </li>
+        <li>
+          <a href="explore-issues.html" class="sidebar-link">
+            <i class="fa-solid fa-map-location-dot"></i> <span>Explore Issues</span>
+          </a>
+        </li>
+        <li>
+          <a href="notifications.html" class="sidebar-link">
+            <i class="fa-solid fa-bell"></i> <span>Notifications</span>
+          </a>
+        </li>
+        <li>
+          <a href="profile.html" class="sidebar-link">
+            <i class="fa-solid fa-user-shield"></i> <span>Civic Profile</span>
+          </a>
+        </li>
+        <li>
+          <a href="settings.html" class="sidebar-link">
+            <i class="fa-solid fa-sliders"></i> <span>Settings</span>
+          </a>
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <a href="javascript:void(0)" onclick="Auth.logout()" class="sidebar-link text-danger">
+          <i class="fa-solid fa-right-from-bracket"></i> <span>Sign Out</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Content Body -->
+    <main class="main-content">
+      <div class="dashboard-header">
+        <div>
+          <h1>My Reported Complaints</h1>
+          <p class="text-muted">Track the resolution lifecycle and municipal field updates for your filed issues.</p>
+        </div>
+        <a href="report-issue.html" class="btn btn-primary">
+          <i class="fa-solid fa-circle-plus"></i> File New Complaint
+        </a>
+      </div>
+
+      <!-- Filter Bar -->
+      <div class="filter-bar">
+        <div class="search-input-wrap">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" id="my-search-input" class="form-control" placeholder="Search by title, tracking ID, or locality...">
+        </div>
+
+        <div class="filter-group">
+          <select id="my-status-filter" class="filter-select">
+            <option value="all">All Statuses</option>
+            <option value="submitted">Submitted</option>
+            <option value="verified">Verified</option>
+            <option value="assigned">Assigned</option>
+            <option value="in_progress">In Progress</option>
+            <option value="resolved">Resolved</option>
+          </select>
+
+          <select id="my-category-filter" class="filter-select">
+            <option value="all">All Categories</option>
+            <option value="Roads/Potholes">Roads/Potholes</option>
+            <option value="Garbage">Garbage</option>
+            <option value="Streetlights">Streetlights</option>
+            <option value="Water Supply">Water Supply</option>
+            <option value="Drainage/Flooding">Drainage/Flooding</option>
+            <option value="Traffic Signals">Traffic Signals</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Complaints List Container -->
+      <div id="my-complaints-list" style="display: flex; flex-direction: column; gap: 1.25rem;"></div>
+    </main>
+  </div>
+
+  <script src="js/utils.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/notifications.js"></script>
+  <script src="js/priority.js"></script>
+  <script src="js/complaints.js"></script>
+  <script src="js/emailService.js"></script>
+  <script src="js/ui.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!Auth.requireAuth(['citizen'])) return;
+      const user = Auth.getCurrentUser();
+
+      const loadMyComplaints = () => {
+        const searchVal = document.getElementById('my-search-input').value.toLowerCase();
+        const statusVal = document.getElementById('my-status-filter').value;
+        const catVal = document.getElementById('my-category-filter').value;
+
+        const all = Storage.get(STORAGE_KEYS.COMPLAINTS, []);
+        let myItems = all.filter(c => c.reportedBy && c.reportedBy.id === user.id);
+
+        if (statusVal !== 'all') myItems = myItems.filter(c => c.status === statusVal);
+        if (catVal !== 'all') myItems = myItems.filter(c => c.category === catVal);
+        if (searchVal) {
+          myItems = myItems.filter(c =>
+            c.title.toLowerCase().includes(searchVal) ||
+            c.id.toLowerCase().includes(searchVal) ||
+            (c.area && c.area.toLowerCase().includes(searchVal))
+          );
+        }
+
+        const container = document.getElementById('my-complaints-list');
+        if (!container) return;
+
+        if (myItems.length === 0) {
+          container.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-state-icon"><i class="fa-solid fa-clipboard-check"></i></div>
+              <div class="empty-state-title">No matching complaints found</div>
+              <p class="empty-state-desc">Try clearing your search query or report a new civic issue in your ward.</p>
+              <a href="report-issue.html" class="btn btn-primary">Report an Issue</a>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = myItems.map(c => `
+          <div class="card card-interactive" style="display: flex; gap: 1.5rem; align-items: center; flex-wrap: wrap;">
+            <img src="${c.beforeImage}" alt="${Utils.escapeHtml(c.title)}" style="width: 130px; height: 95px; object-fit: cover; border-radius: var(--radius-md);">
+            <div style="flex: 1; min-width: 250px;">
+              <div class="d-flex align-center gap-2 mb-1">
+                <span class="badge badge-primary">${c.id}</span>
+                <span class="status-pill status-${c.status}">${c.status.replace('_', ' ').toUpperCase()}</span>
+                <span class="badge ${c.priorityScore >= 80 ? 'badge-danger' : c.priorityScore >= 60 ? 'badge-warning' : 'badge-neutral'}">
+                  Score: ${c.priorityScore}/100
+                </span>
+              </div>
+              <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.25rem;">
+                <a href="complaint-details.html?id=${c.id}" style="color: var(--text-main);">${Utils.escapeHtml(c.title)}</a>
+              </h3>
+              <div class="text-muted" style="font-size: 0.85rem;">
+                <span><i class="fa-solid fa-location-dot"></i> ${c.area}, ${c.city}</span> &bull; 
+                <span><i class="fa-solid fa-calendar"></i> Reported ${Utils.timeAgo(c.createdAt)}</span> &bull; 
+                <span><i class="fa-solid fa-arrow-up"></i> ${c.upvotes || 0} Upvotes</span>
+              </div>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+              <a href="complaint-details.html?id=${c.id}" class="btn btn-primary btn-sm">
+                Track Timeline <i class="fa-solid fa-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+        `).join('');
+      };
+
+      loadMyComplaints();
+
+      document.getElementById('my-search-input').addEventListener('input', loadMyComplaints);
+      document.getElementById('my-status-filter').addEventListener('change', loadMyComplaints);
+      document.getElementById('my-category-filter').addEventListener('change', loadMyComplaints);
+    });
+  </script>
+</body>
+</html>

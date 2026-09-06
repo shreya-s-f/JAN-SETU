@@ -1,0 +1,19 @@
+{
+  "name": "jansetu",
+  "version": "2.0.0",
+  "description": "Smart civic issue reporting, tracking, and community verification platform for Indian cities",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [
+    "civic-tech",
+    "smart-cities",
+    "india",
+    "jansetu",
+    "potholes",
+    "municipal"
+  ],
+  "author": "JanSetu Open Civic Initiative",
+  "license": "MIT"
+}

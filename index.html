@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JanSetu — Your Voice. Your City. Your JanSetu. 🇮🇳</title>
+  <meta name="description" content="India's leading smart civic issue reporting, community verification and city improvement platform.">
+  
+  <!-- Google Fonts & Font Awesome Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- CSS Stylesheets -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/landing.css">
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <header class="top-navbar">
+    <a href="index.html" class="brand-logo">
+      <span class="flag-badge">🇮🇳</span>
+      <span>JAN<span class="logo-accent">SETU</span></span>
+    </a>
+
+    <ul class="nav-menu">
+      <li><a href="index.html" class="nav-link active">Home</a></li>
+      <li><a href="explore-issues.html" class="nav-link">Explore City</a></li>
+      <li><a href="transparency.html" class="nav-link">Transparency</a></li>
+      <li><a href="about.html" class="nav-link">About & Mission</a></li>
+    </ul>
+
+    <div class="nav-actions">
+      <!-- Theme Switcher -->
+      <button class="icon-btn" id="theme-toggle-btn" aria-label="Toggle Theme">
+        <i class="fa-regular fa-sun"></i>
+      </button>
+
+      <!-- User Nav Container -->
+      <div id="nav-user-container" style="display: flex; align-items: center; gap: 0.75rem;">
+        <a href="login.html" class="btn btn-secondary btn-sm">Login</a>
+        <a href="register.html" class="btn btn-primary btn-sm">Register</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section with Background Video / Poster Overlay -->
+  <section class="hero-section">
+    <video class="hero-video-bg" autoplay muted loop playsinline poster="https://images.unsplash.com/photo-1570168007204-dfb528c6958f?auto=format&fit=crop&w=1920&q=80">
+      <source src="https://assets.mixkit.co/videos/preview/mixkit-traffic-at-night-in-a-busy-city-43224-large.mp4" type="video/mp4">
+    </video>
+    <div class="hero-overlay"></div>
+
+    <div class="container" style="position: relative; z-index: 2;">
+      <div class="hero-badge">
+        <i class="fa-solid fa-satellite-dish"></i> Civic Intelligence Platform
+      </div>
+      <h1 class="hero-title">
+        Your Voice. Your City.<br>Your JanSetu.
+      </h1>
+      <p class="hero-subtitle">
+        Report civic problems, bring your community together, track field resolutions with photo proof, and help build better Indian cities.
+      </p>
+
+      <div class="hero-cta-group">
+        <a href="report-issue.html" class="btn btn-primary btn-lg">
+          <i class="fa-solid fa-camera"></i> Report an Issue
+        </a>
+        <a href="explore-issues.html" class="btn btn-secondary btn-lg">
+          <i class="fa-solid fa-map-location-dot"></i> Explore City Map
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Animated Statistics Banner -->
+  <section class="stats-banner">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-number" id="landing-stat-reports">14,850</div>
+          <div class="stat-label">Civic Issues Reported</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number" id="landing-stat-resolved">12,680</div>
+          <div class="stat-label">Resolved with Photo Proof</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number" id="landing-stat-rate">89.4%</div>
+          <div class="stat-label">Resolution Rate</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number" id="landing-stat-time">36 hrs</div>
+          <div class="stat-label">Avg. Response Time</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How JanSetu Works -->
+  <section style="padding: 5rem 0; background: var(--bg-dark);">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Empowering Citizens</span>
+        <h2 class="section-title">How JanSetu Works</h2>
+        <p class="section-description">
+          A transparent 4-step pipeline that transforms community complaints into verified municipal resolutions.
+        </p>
+      </div>
+
+      <div class="workflow-grid">
+        <div class="workflow-card">
+          <div class="workflow-step-num">01</div>
+          <div class="workflow-icon"><i class="fa-solid fa-location-crosshairs"></i></div>
+          <h3>Snap & Geo-Report</h3>
+          <p class="text-muted mt-2">
+            Click a photo of the pothole, garbage dump, or broken streetlight. JanSetu captures verified GPS coordinates automatically.
+          </p>
+        </div>
+
+        <div class="workflow-card">
+          <div class="workflow-step-num">02</div>
+          <div class="workflow-icon"><i class="fa-solid fa-bolt-lightning"></i></div>
+          <h3>Civic Priority Scoring</h3>
+          <p class="text-muted mt-2">
+            Our multi-factor scoring evaluates affected population, road hazard levels, and community upvotes to set urgent priorities.
+          </p>
+        </div>
+
+        <div class="workflow-card">
+          <div class="workflow-step-num">03</div>
+          <div class="workflow-icon"><i class="fa-solid fa-person-digging"></i></div>
+          <h3>Field Squad Dispatch</h3>
+          <p class="text-muted mt-2">
+            Municipal administrators assign dedicated field workers. Citizens track real-time progress notes directly on the timeline.
+          </p>
+        </div>
+
+        <div class="workflow-card">
+          <div class="workflow-step-num">04</div>
+          <div class="workflow-icon"><i class="fa-solid fa-circle-check"></i></div>
+          <h3>Before/After Proof</h3>
+          <p class="text-muted mt-2">
+            Workers upload "After" resolution photos. Citizens inspect the results, rate the quality, or reopen the complaint if incomplete.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Civic Issue Categories Showcase -->
+  <section style="padding: 5rem 0; background: var(--bg-surface);">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Comprehensive Coverage</span>
+        <h2 class="section-title">Civic Issue Categories</h2>
+        <p class="section-description">
+          Covering all primary municipal and public utility domains across Indian metropolitan wards.
+        </p>
+      </div>
+
+      <div class="categories-showcase-grid">
+        <div class="cat-showcase-card">
+          <div class="cat-icon-wrap"><i class="fa-solid fa-road"></i></div>
+          <div class="cat-info">
+            <h4>Roads & Potholes</h4>
+            <span>Craters, asphalt cracks & bumps</span>
+          </div>
+        </div>
+        <div class="cat-showcase-card">
+          <div class="cat-icon-wrap"><i class="fa-solid fa-trash-can"></i></div>
+          <div class="cat-info">
+            <h4>Garbage & Sanitation</h4>
+            <span>Overflowing dumps & black spots</span>
+          </div>
+        </div>
+        <div class="cat-showcase-card">
+          <div class="cat-icon-wrap"><i class="fa-solid fa-lightbulb"></i></div>
+          <div class="cat-info">
+            <h4>Streetlighting</h4>
+            <span>Dead poles, dark stretches & short circuits</span>
+          </div>
+        </div>
+        <div class="cat-showcase-card">
+          <div class="cat-icon-wrap"><i class="fa-solid fa-faucet-drip"></i></div>
+          <div class="cat-info">
+            <h4>Water Supply</h4>
+            <span>Pipeline bursts, contaminated water</span>
+          </div>
+        </div>
+        <div class="cat-showcase-card">
+          <div class="cat-icon-wrap"><i class="fa-solid fa-water"></i></div>
+          <div class="cat-info">
+            <h4>Drainage & Flooding</h4>
+            <span>Broken slabs, choked stormwater drains</span>
+          </div>
+        </div>
+        <div class="cat-showcase-card">
+          <div class="cat-icon-wrap"><i class="fa-solid fa-traffic-light"></i></div>
+          <div class="cat-info">
+            <h4>Traffic & Signals</h4>
+            <span>Signal timer failures, blocked roads</span>
+          </div>
+        </div>
+        <div class="cat-showcase-card">
+          <div class="cat-icon-wrap"><i class="fa-solid fa-restroom"></i></div>
+          <div class="cat-info">
+            <h4>Public Toilets</h4>
+            <span>Dry taps, damaged doors, sanitation</span>
+          </div>
+        </div>
+        <div class="cat-showcase-card">
+          <div class="cat-icon-wrap"><i class="fa-solid fa-tree"></i></div>
+          <div class="cat-info">
+            <h4>Parks & Green Spaces</h4>
+            <span>Broken play equipment, fallen trees</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Before / After Resolution Showcase -->
+  <section style="padding: 5rem 0; background: var(--bg-dark);">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Verifiable Outcomes</span>
+        <h2 class="section-title">Before & After Resolution Proof</h2>
+        <p class="section-description">
+          Slide the bar to compare the on-ground transformation verified by citizens on 80 Feet Road, Koramangala.
+        </p>
+      </div>
+
+      <div style="display: flex; justify-content: center;">
+        <div class="ba-slider-container" id="landing-ba-slider">
+          <!-- After Image (Background) -->
+          <img src="https://images.unsplash.com/photo-1530587191325-3db32d826c18?auto=format&fit=crop&w=800&q=80" class="ba-slider-img" alt="After Resolution">
+          <div class="ba-slider-label ba-label-after">AFTER RESOLUTION ✓</div>
+
+          <!-- Before Image (Overlay clipped) -->
+          <div class="ba-slider-overlay">
+            <img src="https://images.unsplash.com/photo-1605600659908-0ef719419d41?auto=format&fit=crop&w=800&q=80" alt="Before Resolution">
+            <div class="ba-slider-label ba-label-before">BEFORE COMPLAINT</div>
+          </div>
+
+          <!-- Drag Handle -->
+          <div class="ba-slider-handle">
+            <i class="fa-solid fa-arrows-left-right"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-center mt-3">
+        <div style="font-weight: 700; font-size: 1.1rem;">JS-2026-001246: 80 Feet Road Garbage Dump</div>
+        <div class="text-muted" style="font-size: 0.9rem;">Cleaned by Worker Ramesh Gowda • Estimated 650 Citizens Benefited</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Community Challenges Section -->
+  <section style="padding: 5rem 0; background: var(--bg-surface);">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Collective Citizen Power</span>
+        <h2 class="section-title">Active Community Challenges</h2>
+        <p class="section-description">
+          Join neighborhood drives to solve persistent civic bottlenecks alongside fellow residents.
+        </p>
+      </div>
+
+      <div class="challenges-grid">
+        <div class="challenge-card">
+          <div class="challenge-card-banner" style="background-image: url('https://images.unsplash.com/photo-1515263487990-61b07816b324?auto=format&fit=crop&w=600&q=80');">
+            <span class="badge badge-primary">Indiranagar Ward 150</span>
+          </div>
+          <div class="challenge-card-body">
+            <h4>Zero Pothole Corridor: 100 Feet Road</h4>
+            <p class="text-muted mt-1" style="font-size: 0.88rem;">
+              Community initiative targeting 25 critical craters between Old Airport Rd and CMH Rd.
+            </p>
+            <div class="challenge-meta-row mt-3">
+              <span><strong>19</strong> of 25 Fixed</span>
+              <span class="text-primary fw-bold">76% Completed</span>
+            </div>
+            <div class="progress-bar-wrap">
+              <div class="progress-bar-fill" style="width: 76%;"></div>
+            </div>
+            <div class="d-flex justify-between align-center">
+              <span style="font-size: 0.8rem; color: var(--text-dim);"><i class="fa-solid fa-users"></i> 284 Citizens Joined</span>
+              <a href="login.html" class="btn btn-outline btn-sm">Join Challenge</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="challenge-card">
+          <div class="challenge-card-banner" style="background-image: url('https://images.unsplash.com/photo-1530587191325-3db32d826c18?auto=format&fit=crop&w=600&q=80');">
+            <span class="badge badge-success">Koramangala 4th Block</span>
+          </div>
+          <div class="challenge-card-body">
+            <h4>Mission Swachh Koramangala 2026</h4>
+            <p class="text-muted mt-1" style="font-size: 0.88rem;">
+              Eliminating 40 roadside commercial garbage dumps and setting up CCTV surveillance.
+            </p>
+            <div class="challenge-meta-row mt-3">
+              <span><strong>31</strong> of 40 Cleared</span>
+              <span class="text-success fw-bold">77.5% Completed</span>
+            </div>
+            <div class="progress-bar-wrap">
+              <div class="progress-bar-fill" style="width: 77.5%; background: var(--success);"></div>
+            </div>
+            <div class="d-flex justify-between align-center">
+              <span style="font-size: 0.8rem; color: var(--text-dim);"><i class="fa-solid fa-users"></i> 512 Citizens Joined</span>
+              <a href="login.html" class="btn btn-outline btn-sm">Join Challenge</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="challenge-card">
+          <div class="challenge-card-banner" style="background-image: url('https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=600&q=80');">
+            <span class="badge badge-warning">Domlur & Kodihalli</span>
+          </div>
+          <div class="challenge-card-body">
+            <h4>Light Up Every Alley: Ward 150</h4>
+            <p class="text-muted mt-1" style="font-size: 0.88rem;">
+              Repairing 20 dead streetlights in residential lanes for safe night pedestrian movement.
+            </p>
+            <div class="challenge-meta-row mt-3">
+              <span><strong>16</strong> of 20 Repaired</span>
+              <span class="text-warning fw-bold">80% Completed</span>
+            </div>
+            <div class="progress-bar-wrap">
+              <div class="progress-bar-fill" style="width: 80%; background: var(--warning);"></div>
+            </div>
+            <div class="d-flex justify-between align-center">
+              <span style="font-size: 0.8rem; color: var(--text-dim);"><i class="fa-solid fa-users"></i> 198 Citizens Joined</span>
+              <a href="login.html" class="btn btn-outline btn-sm">Join Challenge</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Call to Action -->
+  <section class="container">
+    <div class="cta-section">
+      <h2 style="font-size: 2.4rem; font-weight: 800; margin-bottom: 1rem;">
+        Take Charge of Your Neighborhood Today
+      </h2>
+      <p style="color: #cbd5e1; max-width: 650px; margin: 0 auto 2rem; font-size: 1.1rem;">
+        Join over 15,000 citizens across Indian cities turning daily civic frustration into verified public improvements.
+      </p>
+      <div class="d-flex gap-2 justify-between" style="justify-content: center; flex-wrap: wrap;">
+        <a href="register.html" class="btn btn-primary btn-lg">Create Free Account</a>
+        <a href="transparency.html" class="btn btn-secondary btn-lg">View Transparency Dashboard</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="main-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <div class="brand-logo mb-2">
+            <span class="flag-badge">🇮🇳</span>
+            <span>JAN<span class="logo-accent">SETU</span></span>
+          </div>
+          <p class="text-muted" style="font-size: 0.9rem; max-width: 320px;">
+            "Your Voice. Your City. Your JanSetu."<br>
+            A smart civic intelligence, verification, and city improvement platform for Indian cities.
+          </p>
+        </div>
+
+        <div class="footer-col">
+          <h4>Platform Portals</h4>
+          <ul class="footer-links">
+            <li><a href="citizen-dashboard.html">Citizen Command Center</a></li>
+            <li><a href="admin-dashboard.html">Admin Operations Desk</a></li>
+            <li><a href="worker-dashboard.html">Field Worker Squad Portal</a></li>
+            <li><a href="report-issue.html">Multi-Step Issue Reporting</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Public Intelligence</h4>
+          <ul class="footer-links">
+            <li><a href="explore-issues.html">Live Problem Map</a></li>
+            <li><a href="transparency.html">City Transparency Score</a></li>
+            <li><a href="about.html">Architecture & Mission</a></li>
+            <li><a href="admin-email-logs.html">Email Simulation Audit</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Metropolitan Hubs</h4>
+          <ul class="footer-links">
+            <li><a href="explore-issues.html?city=Bengaluru">Bengaluru (BBMP)</a></li>
+            <li><a href="explore-issues.html?city=Mumbai">Mumbai (BMC)</a></li>
+            <li><a href="explore-issues.html?city=Delhi">Delhi (MCD/NDMC)</a></li>
+            <li><a href="explore-issues.html?city=Hyderabad">Hyderabad (GHMC)</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>&copy; 2026 JanSetu. Built for Indian Smart Cities. Frontend Architecture.</div>
+        <div style="display: flex; gap: 1rem;">
+          <a href="settings.html" class="text-muted">Preferences</a>
+          <a href="about.html" class="text-muted">Disclaimer</a>
+          <a href="javascript:void(0)" onclick="Storage.resetDemoData(); location.reload();" class="text-primary">
+            <i class="fa-solid fa-rotate-left"></i> Reset Demo Data
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/utils.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/notifications.js"></script>
+  <script src="js/priority.js"></script>
+  <script src="js/complaints.js"></script>
+  <script src="js/emailService.js"></script>
+  <script src="js/ui.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Initialize before/after slider on landing
+      const sliderContainer = document.getElementById('landing-ba-slider');
+      if (sliderContainer && UI.initBeforeAfterSlider) {
+        UI.initBeforeAfterSlider(sliderContainer);
+      }
+    });
+  </script>
+</body>
+</html>

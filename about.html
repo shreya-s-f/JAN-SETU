@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About & Architecture — JanSetu 🇮🇳</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/landing.css">
+</head>
+<body>
+
+  <!-- Top Navbar -->
+  <header class="top-navbar">
+    <div class="d-flex align-center gap-2">
+      <a href="index.html" class="brand-logo">
+        <span class="flag-badge">🇮🇳</span>
+        <span>JAN<span class="logo-accent">SETU</span></span>
+      </a>
+    </div>
+
+    <ul class="nav-menu">
+      <li><a href="index.html" class="nav-link">Home</a></li>
+      <li><a href="explore-issues.html" class="nav-link">Explore City</a></li>
+      <li><a href="transparency.html" class="nav-link">Transparency</a></li>
+      <li><a href="about.html" class="nav-link active">About</a></li>
+    </ul>
+
+    <div class="nav-actions">
+      <button class="icon-btn" id="theme-toggle-btn" aria-label="Toggle Theme">
+        <i class="fa-regular fa-sun"></i>
+      </button>
+      <div id="nav-user-container">
+        <a href="login.html" class="btn btn-primary btn-sm">Login</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="container" style="padding: 4rem 1.5rem; max-width: 960px;">
+    <div class="section-header text-center">
+      <span class="section-tag"><i class="fa-solid fa-flag"></i> Our Story</span>
+      <h1 class="section-title">Bridging Citizens & Cities</h1>
+      <p class="section-description">
+        "Your Voice. Your City. Your JanSetu."
+      </p>
+    </div>
+
+    <div class="card mb-4" style="line-height: 1.8; font-size: 1.05rem;">
+      <h3 style="font-size: 1.35rem; font-weight: 800; margin-bottom: 1rem; color: var(--primary);">The Problem We Solve</h3>
+      <p class="text-muted mb-3">
+        In rapidly expanding Indian cities like Bengaluru, Mumbai, Delhi, and Hyderabad, millions of citizens navigate daily civic hazards: severe craters and potholes, overflowing roadside garbage dumps, broken streetlights that create dark unsafe stretches, and choked drains that flood roads in 20 minutes of rain.
+      </p>
+      <p class="text-muted mb-3">
+        Traditional grievance helplines too often feel like opaque black holes where complaints vanish without photographic proof, verified timelines, or community oversight.
+      </p>
+      <p class="text-muted">
+        <strong>JanSetu</strong> changes this paradigm completely. By turning every citizen into a civic observer and equipping municipal teams with transparent task tracking, we create mutual accountability powered by verifiable photographic proof.
+      </p>
+    </div>
+
+    <!-- Core Tenets -->
+    <div class="workflow-grid mb-4">
+      <div class="card">
+        <div style="font-size: 2rem; color: var(--primary); margin-bottom: 1rem;"><i class="fa-solid fa-camera-retro"></i></div>
+        <h4>Visual Proof Always</h4>
+        <p class="text-muted mt-2" style="font-size: 0.9rem;">
+          Every complaint begins with a geo-tagged defect photo, and every resolution must be completed with an authentic "After" photo.
+        </p>
+      </div>
+
+      <div class="card">
+        <div style="font-size: 2rem; color: var(--warning); margin-bottom: 1rem;"><i class="fa-solid fa-scale-balanced"></i></div>
+        <h4>Civic Priority Score</h4>
+        <p class="text-muted mt-2" style="font-size: 0.9rem;">
+          Our objective formula calculates affected population, hazard severity, and community upvotes to eliminate favoritism.
+        </p>
+      </div>
+
+      <div class="card">
+        <div style="font-size: 2rem; color: var(--success); margin-bottom: 1rem;"><i class="fa-solid fa-people-group"></i></div>
+        <h4>Community Verification</h4>
+        <p class="text-muted mt-2" style="font-size: 0.9rem;">
+          Neighbors can verify if an issue is still present or truly resolved, providing ground-truth checks on administrative claims.
+        </p>
+      </div>
+    </div>
+
+    <!-- Technology Architecture Callout -->
+    <div class="card mb-4" style="background: var(--bg-surface-elevated); border-left: 4px solid var(--primary);">
+      <h4 style="font-size: 1.15rem; margin-bottom: 0.75rem;"><i class="fa-solid fa-code text-primary"></i> Technical Architecture</h4>
+      <p class="text-muted" style="font-size: 0.92rem; margin-bottom: 1rem;">
+        JanSetu is engineered as a pure, high-performance <strong>Frontend-Only Web Application</strong> using Vanilla ES6+ JavaScript, CSS3 design tokens, and HTML5.
+      </p>
+      <ul style="padding-left: 1.25rem; font-size: 0.9rem; color: var(--text-muted); line-height: 1.7;">
+        <li><strong>Data Store:</strong> Persistent centralized client repository in <code>localStorage</code> with auto-initialization and clean schema CRUD.</li>
+        <li><strong>Interactive Maps:</strong> Leaflet.js + OpenStreetMap with custom SVG markers and a Problem Heatmap simulator.</li>
+        <li><strong>Visual Analytics:</strong> Chart.js 4.4 for department scorecards, monthly trends, and category distribution.</li>
+        <li><strong>Email System:</strong> Modular <code>emailService.js</code> abstraction generating simulated outbound emails and UI audit logs, ready for plug-and-play backend connection.</li>
+      </ul>
+    </div>
+
+    <!-- Official Disclaimer -->
+    <div class="card" style="background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.3);">
+      <div class="d-flex align-center gap-2 mb-1">
+        <i class="fa-solid fa-triangle-exclamation text-warning" style="font-size: 1.2rem;"></i>
+        <h4 style="font-size: 1rem; color: var(--warning); margin: 0;">Demonstration & Civic Tech Disclaimer</h4>
+      </div>
+      <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; margin: 0;">
+        JanSetu is an independent civic-tech technology demonstration platform. It is not officially affiliated with BBMP, BMC, NDMC, GHMC, or any governmental agency. All citizen names, complaint reports, and department statistics in this demonstration are simulated for testing and UI/UX validation purposes.
+      </p>
+    </div>
+  </div>
+
+  <script src="js/utils.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/notifications.js"></script>
+  <script src="js/priority.js"></script>
+  <script src="js/complaints.js"></script>
+  <script src="js/emailService.js"></script>
+  <script src="js/ui.js"></script>
+</body>
+</html>

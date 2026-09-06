@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Citizen Registration — JanSetu 🇮🇳</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <style>
+    .auth-page-wrapper {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2.5rem 1.5rem;
+      background: radial-gradient(circle at top, rgba(0, 102, 255, 0.12) 0%, #090d16 80%);
+    }
+    .auth-card {
+      width: 100%;
+      max-width: 520px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-xl);
+      padding: 2.5rem;
+      box-shadow: var(--shadow-lg);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="auth-page-wrapper">
+    <div class="auth-card">
+      <div class="text-center mb-4">
+        <a href="index.html" class="brand-logo" style="justify-content: center; margin-bottom: 0.5rem;">
+          <span class="flag-badge">🇮🇳</span>
+          <span>JAN<span class="logo-accent">SETU</span></span>
+        </a>
+        <p class="text-muted" style="font-size: 0.9rem;">Join your city's civic action platform</p>
+      </div>
+
+      <form id="register-form">
+        <div class="form-group">
+          <label class="form-label" for="reg-name">Full Name <span class="required">*</span></label>
+          <input type="text" id="reg-name" class="form-control" placeholder="e.g. Ramesh Kumar" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="reg-email">Email Address <span class="required">*</span></label>
+          <input type="email" id="reg-email" class="form-control" placeholder="citizen@example.in" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="reg-phone">Mobile Phone (for SMS / WhatsApp Alerts) <span class="required">*</span></label>
+          <input type="tel" id="reg-phone" class="form-control" placeholder="+91 98000 00000" required>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div class="form-group">
+            <label class="form-label" for="reg-city">City <span class="required">*</span></label>
+            <select id="reg-city" class="form-control" required>
+              <option value="Bengaluru" selected>Bengaluru</option>
+              <option value="Mumbai">Mumbai</option>
+              <option value="Delhi">Delhi</option>
+              <option value="Hyderabad">Hyderabad</option>
+              <option value="Pune">Pune</option>
+              <option value="Chennai">Chennai</option>
+              <option value="Mysuru">Mysuru</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="reg-ward">Ward / Locality</label>
+            <input type="text" id="reg-ward" class="form-control" placeholder="e.g. Indiranagar">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="reg-password">Password (min 6 characters) <span class="required">*</span></label>
+          <input type="password" id="reg-password" class="form-control" placeholder="••••••••" required minlength="6">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="reg-confirm-password">Confirm Password <span class="required">*</span></label>
+          <input type="password" id="reg-confirm-password" class="form-control" placeholder="••••••••" required minlength="6">
+        </div>
+
+        <div class="form-group">
+          <label style="display: flex; align-items: flex-start; gap: 0.5rem; font-size: 0.82rem; color: var(--text-muted); cursor: pointer;">
+            <input type="checkbox" required checked style="margin-top: 3px;">
+            <span>I agree to the Community Charter and pledge to report authentic civic problems in good faith.</span>
+          </label>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block btn-lg" id="btn-register-submit">
+          Create Account (+50 Civic Points) <i class="fa-solid fa-sparkles"></i>
+        </button>
+      </form>
+
+      <div class="text-center mt-4" style="font-size: 0.9rem; color: var(--text-muted);">
+        Already registered? <a href="login.html" style="color: var(--primary); font-weight: 600;">Sign In</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/utils.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/notifications.js"></script>
+  <script src="js/priority.js"></script>
+  <script src="js/complaints.js"></script>
+  <script src="js/emailService.js"></script>
+  <script src="js/ui.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('register-form');
+      if (form) {
+        form.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const name = document.getElementById('reg-name').value.trim();
+          const email = document.getElementById('reg-email').value.trim();
+          const phone = document.getElementById('reg-phone').value.trim();
+          const city = document.getElementById('reg-city').value;
+          const ward = document.getElementById('reg-ward').value.trim();
+          const pwd = document.getElementById('reg-password').value;
+          const confirmPwd = document.getElementById('reg-confirm-password').value;
+
+          if (pwd !== confirmPwd) {
+            UI.showToast({ type: 'error', title: 'Passwords Mismatch', message: 'The entered passwords do not match.' });
+            return;
+          }
+
+          const res = Auth.register({ name, email, phone, city, ward, password: pwd });
+          if (res.success) {
+            UI.showToast({
+              type: 'success',
+              title: 'Account Created! 🎉',
+              message: 'Welcome to JanSetu! A welcome email was simulated.'
+            });
+            setTimeout(() => {
+              window.location.href = 'citizen-dashboard.html';
+            }, 1000);
+          } else {
+            UI.showToast({ type: 'error', title: 'Registration Failed', message: res.message });
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

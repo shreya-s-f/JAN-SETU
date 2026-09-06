@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Citizen Command Center — JanSetu 🇮🇳</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+
+  <!-- Top Navbar -->
+  <header class="top-navbar">
+    <div class="d-flex align-center gap-2">
+      <button class="mobile-nav-toggle" id="mobile-sidebar-toggle">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+      <a href="index.html" class="brand-logo">
+        <span class="flag-badge">🇮🇳</span>
+        <span>JAN<span class="logo-accent">SETU</span></span>
+      </a>
+    </div>
+
+    <div class="nav-actions">
+      <a href="notifications.html" class="icon-btn" aria-label="Notifications">
+        <i class="fa-regular fa-bell"></i>
+        <span class="icon-badge notification-badge-count" style="display: none;">0</span>
+      </a>
+      <button class="icon-btn" id="theme-toggle-btn" aria-label="Toggle Theme">
+        <i class="fa-regular fa-sun"></i>
+      </button>
+      <div id="nav-user-container"></div>
+    </div>
+  </header>
+
+  <!-- App Layout with Sidebar -->
+  <div class="app-layout">
+    <aside class="sidebar">
+      <div class="sidebar-heading">Citizen Portal</div>
+      <ul class="sidebar-nav">
+        <li>
+          <a href="citizen-dashboard.html" class="sidebar-link active">
+            <i class="fa-solid fa-gauge"></i> <span>Dashboard</span>
+          </a>
+        </li>
+        <li>
+          <a href="report-issue.html" class="sidebar-link">
+            <i class="fa-solid fa-circle-plus"></i> <span>Report Issue</span>
+          </a>
+        </li>
+        <li>
+          <a href="my-complaints.html" class="sidebar-link">
+            <i class="fa-solid fa-list-check"></i> <span>My Complaints</span>
+          </a>
+        </li>
+        <li>
+          <a href="explore-issues.html" class="sidebar-link">
+            <i class="fa-solid fa-map-location-dot"></i> <span>Explore Issues</span>
+          </a>
+        </li>
+        <li>
+          <a href="notifications.html" class="sidebar-link">
+            <i class="fa-solid fa-bell"></i> <span>Notifications</span>
+          </a>
+        </li>
+        <li>
+          <a href="profile.html" class="sidebar-link">
+            <i class="fa-solid fa-user-shield"></i> <span>Civic Profile</span>
+          </a>
+        </li>
+        <li>
+          <a href="settings.html" class="sidebar-link">
+            <i class="fa-solid fa-sliders"></i> <span>Settings</span>
+          </a>
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <a href="javascript:void(0)" onclick="Auth.logout()" class="sidebar-link text-danger">
+          <i class="fa-solid fa-right-from-bracket"></i> <span>Sign Out</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Content Body -->
+    <main class="main-content">
+      <!-- Header Greeting -->
+      <div class="dashboard-header">
+        <div class="dashboard-greeting">
+          <h1>Namaste, <span id="citizen-greeting-name">Citizen</span>! 👋</h1>
+          <p>Here is the current civic status and active resolutions in your ward.</p>
+        </div>
+        <div class="dashboard-actions">
+          <span class="badge badge-primary" id="citizen-city-badge">Bengaluru</span>
+          <a href="report-issue.html" class="btn btn-primary">
+            <i class="fa-solid fa-circle-plus"></i> Report Civic Issue
+          </a>
+        </div>
+      </div>
+
+      <!-- KPI Summary Cards -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-info">
+            <h3>Total Reported</h3>
+            <div class="kpi-number" id="kpi-total-reports">0</div>
+            <div class="kpi-trend positive"><i class="fa-solid fa-check"></i> Lifetime contributions</div>
+          </div>
+          <div class="kpi-icon kpi-icon-blue"><i class="fa-solid fa-bullhorn"></i></div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-info">
+            <h3>Active Reports</h3>
+            <div class="kpi-number" id="kpi-active-reports">0</div>
+            <div class="kpi-trend negative"><i class="fa-solid fa-clock"></i> In queue</div>
+          </div>
+          <div class="kpi-icon kpi-icon-amber"><i class="fa-solid fa-triangle-exclamation"></i></div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-info">
+            <h3>In Progress</h3>
+            <div class="kpi-number" id="kpi-progress-reports">0</div>
+            <div class="kpi-trend positive"><i class="fa-solid fa-person-digging"></i> Squad deployed</div>
+          </div>
+          <div class="kpi-icon kpi-icon-purple"><i class="fa-solid fa-wrench"></i></div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-info">
+            <h3>Resolved Proof</h3>
+            <div class="kpi-number" id="kpi-resolved-reports">0</div>
+            <div class="kpi-trend positive"><i class="fa-solid fa-circle-check"></i> 100% verified</div>
+          </div>
+          <div class="kpi-icon kpi-icon-emerald"><i class="fa-solid fa-shield-halved"></i></div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-info">
+            <h3>Civic Impact Score</h3>
+            <div class="kpi-number" id="kpi-impact-score">340</div>
+            <div class="kpi-trend positive"><i class="fa-solid fa-award"></i> Community Helper</div>
+          </div>
+          <div class="kpi-icon kpi-icon-rose"><i class="fa-solid fa-star"></i></div>
+        </div>
+      </div>
+
+      <!-- Recent Complaints & Action Feed -->
+      <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+        <div class="card">
+          <div class="d-flex justify-between align-center mb-3">
+            <h3 style="font-size: 1.15rem; font-weight: 700;">My Recent Reports</h3>
+            <a href="my-complaints.html" style="font-size: 0.85rem; font-weight: 600;">View All <i class="fa-solid fa-arrow-right"></i></a>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Tracking ID</th>
+                  <th>Issue Details</th>
+                  <th>Category</th>
+                  <th>Status</th>
+                  <th>Priority</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="recent-complaints-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Community Challenges Widget -->
+        <div class="card">
+          <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 1rem;">Community Challenges</h3>
+          <div style="display: flex; flex-direction: column; gap: 1rem;">
+            <div style="background: var(--bg-surface-elevated); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1rem;">
+              <div class="d-flex justify-between align-center">
+                <span style="font-weight: 700; font-size: 0.9rem;">Zero Pothole Corridor</span>
+                <span class="badge badge-primary">Indiranagar</span>
+              </div>
+              <p class="text-muted mt-1" style="font-size: 0.8rem;">19 of 25 road craters asphalted.</p>
+              <div class="progress-bar-wrap mt-2" style="margin-bottom: 0.5rem;">
+                <div class="progress-bar-fill" style="width: 76%;"></div>
+              </div>
+              <div class="d-flex justify-between" style="font-size: 0.75rem; color: var(--text-dim);">
+                <span>76% Target Reached</span>
+                <span>284 Residents</span>
+              </div>
+            </div>
+
+            <div style="background: var(--bg-surface-elevated); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1rem;">
+              <div class="d-flex justify-between align-center">
+                <span style="font-weight: 700; font-size: 0.9rem;">Swachh Koramangala 2026</span>
+                <span class="badge badge-success">Koramangala</span>
+              </div>
+              <p class="text-muted mt-1" style="font-size: 0.8rem;">31 of 40 garbage blackspots cleared.</p>
+              <div class="progress-bar-wrap mt-2" style="margin-bottom: 0.5rem;">
+                <div class="progress-bar-fill" style="width: 77.5%; background: var(--success);"></div>
+              </div>
+              <div class="d-flex justify-between" style="font-size: 0.75rem; color: var(--text-dim);">
+                <span>77.5% Target Reached</span>
+                <span>512 Residents</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Nearby Civic Issues Map Card -->
+      <div class="card">
+        <div class="d-flex justify-between align-center mb-3">
+          <div>
+            <h3 style="font-size: 1.15rem; font-weight: 700;">Live Ward Defect Map</h3>
+            <p class="text-muted" style="font-size: 0.85rem;">Click map pins to inspect community issues in your locality.</p>
+          </div>
+          <a href="explore-issues.html" class="btn btn-secondary btn-sm">
+            Fullscreen Map <i class="fa-solid fa-expand"></i>
+          </a>
+        </div>
+        <div id="citizen-map" class="leaflet-map-box"></div>
+      </div>
+    </main>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/notifications.js"></script>
+  <script src="js/priority.js"></script>
+  <script src="js/complaints.js"></script>
+  <script src="js/emailService.js"></script>
+  <script src="js/map.js"></script>
+  <script src="js/citizen.js"></script>
+  <script src="js/ui.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Enforce citizen auth
+      if (!Auth.requireAuth(['citizen'])) return;
+      Citizen.initDashboard();
+    });
+  </script>
+</body>
+</html>

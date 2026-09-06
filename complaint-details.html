@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Issue Tracking Timeline — JanSetu 🇮🇳</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <style>
+    .star-rating {
+      display: inline-flex;
+      gap: 0.35rem;
+      font-size: 1.4rem;
+      cursor: pointer;
+    }
+    .star-rating i {
+      color: var(--text-dim);
+      transition: color var(--transition-fast);
+    }
+    .star-rating i.active, .star-rating i:hover {
+      color: #f59e0b;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navbar -->
+  <header class="top-navbar">
+    <div class="d-flex align-center gap-2">
+      <button class="mobile-nav-toggle" id="mobile-sidebar-toggle">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+      <a href="index.html" class="brand-logo">
+        <span class="flag-badge">🇮🇳</span>
+        <span>JAN<span class="logo-accent">SETU</span></span>
+      </a>
+    </div>
+
+    <div class="nav-actions">
+      <a href="notifications.html" class="icon-btn" aria-label="Notifications">
+        <i class="fa-regular fa-bell"></i>
+        <span class="icon-badge notification-badge-count" style="display: none;">0</span>
+      </a>
+      <button class="icon-btn" id="theme-toggle-btn" aria-label="Toggle Theme">
+        <i class="fa-regular fa-sun"></i>
+      </button>
+      <div id="nav-user-container"></div>
+    </div>
+  </header>
+
+  <!-- App Layout -->
+  <div class="app-layout">
+    <aside class="sidebar">
+      <div class="sidebar-heading">Navigation</div>
+      <ul class="sidebar-nav">
+        <li>
+          <a href="citizen-dashboard.html" class="sidebar-link">
+            <i class="fa-solid fa-gauge"></i> <span>Dashboard</span>
+          </a>
+        </li>
+        <li>
+          <a href="report-issue.html" class="sidebar-link">
+            <i class="fa-solid fa-circle-plus"></i> <span>Report Issue</span>
+          </a>
+        </li>
+        <li>
+          <a href="my-complaints.html" class="sidebar-link active">
+            <i class="fa-solid fa-list-check"></i> <span>My Complaints</span>
+          </a>
+        </li>
+        <li>
+          <a href="explore-issues.html" class="sidebar-link">
+            <i class="fa-solid fa-map-location-dot"></i> <span>Explore Issues</span>
+          </a>
+        </li>
+        <li>
+          <a href="notifications.html" class="sidebar-link">
+            <i class="fa-solid fa-bell"></i> <span>Notifications</span>
+          </a>
+        </li>
+      </ul>
+      <div class="sidebar-footer">
+        <a href="javascript:void(0)" onclick="Auth.logout()" class="sidebar-link text-danger">
+          <i class="fa-solid fa-right-from-bracket"></i> <span>Sign Out</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="dashboard-header">
+        <div>
+          <div class="d-flex align-center gap-2 mb-1">
+            <span class="badge badge-primary" id="det-complaint-id">JS-2026-000000</span>
+            <span id="det-status-pill" class="status-pill status-submitted">SUBMITTED</span>
+          </div>
+          <h1 id="det-title" style="font-size: 1.6rem;">Complaint Title Loading...</h1>
+        </div>
+        <div class="dashboard-actions">
+          <button class="btn btn-secondary" onclick="Utils.copyToClipboard(window.location.href); UI.showToast({type:'success', title:'Link Copied', message:'Complaint link copied to clipboard.'});">
+            <i class="fa-solid fa-share-nodes"></i> Share
+          </button>
+          <a href="explore-issues.html" class="btn btn-outline">
+            <i class="fa-solid fa-map"></i> View on Map
+          </a>
+        </div>
+      </div>
+
+      <!-- Details Two-Column Layout -->
+      <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+        <!-- Left Column: Details, Media & Resolution Slider -->
+        <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+          <!-- Defect Media Box -->
+          <div class="card" id="media-card">
+            <div id="media-container"></div>
+          </div>
+
+          <!-- Description Card -->
+          <div class="card">
+            <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 1rem;">Problem Description</h3>
+            <p id="det-description" style="line-height: 1.7; color: var(--text-muted);"></p>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--border-color);">
+              <div>
+                <span class="text-muted" style="font-size: 0.8rem; text-transform: uppercase;">Location / Address</span>
+                <div id="det-address" style="font-weight: 600; margin-top: 0.25rem;"></div>
+              </div>
+              <div>
+                <span class="text-muted" style="font-size: 0.8rem; text-transform: uppercase;">People Affected Daily</span>
+                <div id="det-affected" style="font-weight: 600; margin-top: 0.25rem;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Community Verification & Upvoting Card -->
+          <div class="card" style="background: linear-gradient(135deg, var(--bg-surface) 0%, rgba(0, 102, 255, 0.05) 100%);">
+            <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem;">Community Backing & Ground Verification</h3>
+            <p class="text-muted" style="font-size: 0.88rem; margin-bottom: 1.25rem;">
+              Citizens can upvote this issue to elevate its municipal priority score or verify whether it is still present on the road.
+            </p>
+
+            <div class="d-flex gap-2" style="flex-wrap: wrap; align-items: center;">
+              <button class="btn btn-primary" id="btn-upvote-issue">
+                <i class="fa-solid fa-arrow-up"></i> Support This Issue (<span id="det-upvotes-count">0</span>)
+              </button>
+              <button class="btn btn-secondary" id="btn-verify-present">
+                <i class="fa-solid fa-circle-exclamation text-warning"></i> Still Present (<span id="det-still-count">0</span>)
+              </button>
+              <button class="btn btn-secondary" id="btn-verify-resolved">
+                <i class="fa-solid fa-circle-check text-success"></i> Fixed (<span id="det-fixed-count">0</span>)
+              </button>
+            </div>
+          </div>
+
+          <!-- Citizen Feedback / Reopen Section (Active when resolved) -->
+          <div class="card" id="resolution-feedback-card" style="display: none;">
+            <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem;">Resolution Review & Feedback</h3>
+            <p class="text-muted" style="font-size: 0.88rem; margin-bottom: 1rem;">
+              Was this issue properly resolved to municipal standards? Rate the resolution quality or request a reopen inspection.
+            </p>
+
+            <div style="margin-bottom: 1rem;">
+              <label class="form-label">Resolution Satisfaction Rating</label>
+              <div class="star-rating" id="star-rating-box">
+                <i class="fa-solid fa-star" data-rating="1"></i>
+                <i class="fa-solid fa-star" data-rating="2"></i>
+                <i class="fa-solid fa-star" data-rating="3"></i>
+                <i class="fa-solid fa-star" data-rating="4"></i>
+                <i class="fa-solid fa-star" data-rating="5"></i>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="citizen-feedback-text">Citizen Feedback / Comments</label>
+              <textarea id="citizen-feedback-text" class="form-control" placeholder="Share your on-ground experience regarding this resolution..."></textarea>
+            </div>
+
+            <div class="d-flex justify-between align-center">
+              <button type="button" class="btn btn-outline" id="btn-reopen-modal">
+                <i class="fa-solid fa-rotate-left text-danger"></i> Not Satisfied? Reopen Issue
+              </button>
+              <button type="button" class="btn btn-success" id="btn-submit-feedback">
+                Submit Feedback <i class="fa-solid fa-check"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Priority Gauge, Leaflet Pin, and Tracking Timeline -->
+        <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+          <!-- Civic Priority Gauge -->
+          <div class="priority-gauge-wrapper">
+            <div class="gauge-circle" id="det-gauge-circle" style="--gauge-val: 75; --gauge-color: #0066ff;">
+              <span class="gauge-val-text" id="det-gauge-number">75</span>
+              <span class="gauge-label-text">CIVIC SCORE</span>
+            </div>
+            <h4 id="det-priority-level-text" style="font-size: 1rem; font-weight: 800; color: var(--primary);">HIGH PRIORITY</h4>
+            <p class="text-muted mt-1" style="font-size: 0.78rem;">Calculated via severity, affected citizens, and community verification votes.</p>
+          </div>
+
+          <!-- Mini Map Location Card -->
+          <div class="card">
+            <h4 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 0.75rem;"><i class="fa-solid fa-location-dot text-primary"></i> Ground Coordinates</h4>
+            <div id="complaint-detail-map" style="height: 180px; border-radius: var(--radius-sm); border: 1px solid var(--border-color);"></div>
+          </div>
+
+          <!-- Status Timeline Card -->
+          <div class="card">
+            <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem;">Resolution Timeline</h3>
+            <div class="timeline" id="det-timeline-container"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Reopen Complaint Modal -->
+  <div id="reopen-modal" class="modal-backdrop">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title">Reopen Complaint</h3>
+        <button class="modal-close" onclick="UI.closeModal('reopen-modal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="text-muted mb-3" style="font-size: 0.9rem;">
+          If the civic defect is still active or was not fixed according to safety norms, explain why so the Senior Municipal Supervisor can review.
+        </p>
+        <div class="form-group">
+          <label class="form-label" for="reopen-reason-text">Reason for Reopening <span class="required">*</span></label>
+          <textarea id="reopen-reason-text" class="form-control" rows="4" placeholder="e.g. The pothole was only filled with loose stones and washed away during last night rain..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="UI.closeModal('reopen-modal')">Cancel</button>
+        <button class="btn btn-danger" id="btn-confirm-reopen">Confirm Reopen</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/notifications.js"></script>
+  <script src="js/priority.js"></script>
+  <script src="js/complaints.js"></script>
+  <script src="js/emailService.js"></script>
+  <script src="js/ui.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const user = Auth.getCurrentUser();
+      const params = new URLSearchParams(window.location.search);
+      const complaintId = params.get('id') || 'JS-2026-001245';
+
+      const complaint = Complaints.getById(complaintId);
+      if (!complaint) {
+        alert('Complaint ID not found.');
+        window.location.href = 'explore-issues.html';
+        return;
+      }
+
+      // Populate Header & Text
+      document.getElementById('det-complaint-id').textContent = complaint.id;
+      document.getElementById('det-title').textContent = complaint.title;
+      document.getElementById('det-description').textContent = complaint.description;
+      document.getElementById('det-address').textContent = `${complaint.address || complaint.area}, ${complaint.city}`;
+      document.getElementById('det-affected').textContent = `${complaint.peopleAffected || '50–100'} citizens`;
+      
+      const statusPill = document.getElementById('det-status-pill');
+      statusPill.className = `status-pill status-${complaint.status}`;
+      statusPill.textContent = complaint.status.replace('_', ' ').toUpperCase();
+
+      // Priority Gauge
+      const score = complaint.priorityScore || 75;
+      const scoreMeta = PriorityEngine.getPriorityMeta(score);
+      const gaugeEl = document.getElementById('det-gauge-circle');
+      gaugeEl.style.setProperty('--gauge-val', score);
+      gaugeEl.style.setProperty('--gauge-color', scoreMeta.color);
+      document.getElementById('det-gauge-number').textContent = score;
+      const priorityLabel = document.getElementById('det-priority-level-text');
+      priorityLabel.textContent = `${scoreMeta.level.toUpperCase()} PRIORITY`;
+      priorityLabel.style.color = scoreMeta.color;
+
+      // Render Media Box: If resolved with afterImage, render Before/After slider!
+      const mediaBox = document.getElementById('media-container');
+      if (complaint.status === 'resolved' && complaint.afterImage) {
+        mediaBox.innerHTML = `
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+            <h4 style="font-size: 1rem; font-weight: 700;"><i class="fa-solid fa-circle-check text-success"></i> Before / After Resolution Proof</h4>
+            <span class="badge badge-success">~${complaint.citizensBenefited || 150} Citizens Benefited</span>
+          </div>
+          <div class="ba-slider-container" id="details-ba-slider" style="height: 320px; max-width: 100%;">
+            <img src="${complaint.afterImage}" class="ba-slider-img" alt="After Fix">
+            <div class="ba-slider-label ba-label-after">AFTER RESOLUTION ✓</div>
+            <div class="ba-slider-overlay">
+              <img src="${complaint.beforeImage}" alt="Before Fix" style="width: 100%; height: 320px;">
+              <div class="ba-slider-label ba-label-before">BEFORE COMPLAINT</div>
+            </div>
+            <div class="ba-slider-handle"><i class="fa-solid fa-arrows-left-right"></i></div>
+          </div>
+          <div style="margin-top: 1rem; padding: 0.85rem; border-radius: var(--radius-sm); background: var(--bg-surface-elevated); font-size: 0.88rem;">
+            <strong>Resolution Note:</strong> <em>"${complaint.resolutionNote || 'Ground work completed with photographic proof.'}"</em>
+          </div>
+        `;
+        setTimeout(() => UI.initBeforeAfterSlider(document.getElementById('details-ba-slider')), 100);
+      } else {
+        mediaBox.innerHTML = `
+          <h4 style="font-size: 1rem; font-weight: 700; margin-bottom: 0.75rem;">Defect Evidence Photo</h4>
+          <img src="${complaint.beforeImage}" alt="${Utils.escapeHtml(complaint.title)}" style="width: 100%; max-height: 380px; object-fit: cover; border-radius: var(--radius-md);">
+        `;
+      }
+
+      // Upvotes & Verifications Counters
+      document.getElementById('det-upvotes-count').textContent = complaint.upvotes || 0;
+      document.getElementById('det-still-count').textContent = complaint.verifications?.stillPresent || 0;
+      document.getElementById('det-fixed-count').textContent = complaint.verifications?.resolved || 0;
+
+      // Upvote action listener
+      document.getElementById('btn-upvote-issue').addEventListener('click', () => {
+        const res = Complaints.upvote(complaint.id, user);
+        if (res.success) {
+          document.getElementById('det-upvotes-count').textContent = res.upvotes;
+          UI.showToast({ type: 'success', title: 'Issue Supported!', message: 'Your upvote has increased the civic priority score.' });
+        } else {
+          UI.showToast({ type: 'info', title: 'Notice', message: res.message });
+        }
+      });
+
+      // Verification listeners
+      document.getElementById('btn-verify-present').addEventListener('click', () => {
+        const res = Complaints.verifyCommunityStatus(complaint.id, 'still_present', user);
+        if (res.success) {
+          document.getElementById('det-still-count').textContent = res.verifications.stillPresent;
+          UI.showToast({ type: 'success', title: 'Verified', message: 'Ground status recorded: Still Present.' });
+        } else {
+          UI.showToast({ type: 'info', title: 'Notice', message: res.message });
+        }
+      });
+
+      document.getElementById('btn-verify-resolved').addEventListener('click', () => {
+        const res = Complaints.verifyCommunityStatus(complaint.id, 'resolved', user);
+        if (res.success) {
+          document.getElementById('det-fixed-count').textContent = res.verifications.resolved;
+          UI.showToast({ type: 'success', title: 'Verified', message: 'Ground status recorded: Fixed.' });
+        } else {
+          UI.showToast({ type: 'info', title: 'Notice', message: res.message });
+        }
+      });
+
+      // Render Timeline
+      const timelineContainer = document.getElementById('det-timeline-container');
+      timelineContainer.innerHTML = (complaint.timeline || []).map((step, idx) => `
+        <div class="timeline-item ${idx === complaint.timeline.length - 1 ? 'active' : 'completed'}">
+          <div class="timeline-dot"></div>
+          <div class="timeline-time">${Utils.formatDateTime(step.timestamp)}</div>
+          <div class="timeline-title">${step.title}</div>
+          <div class="timeline-desc">${step.desc}</div>
+        </div>
+      `).join('');
+
+      // Show Feedback Card if Resolved
+      if (complaint.status === 'resolved') {
+        const fbCard = document.getElementById('resolution-feedback-card');
+        fbCard.style.display = 'block';
+
+        let selectedRating = complaint.citizenRating || 5;
+        const stars = document.querySelectorAll('#star-rating-box i');
+        const updateStars = (val) => {
+          stars.forEach(s => {
+            const r = parseInt(s.getAttribute('data-rating'));
+            s.classList.toggle('active', r <= val);
+          });
+        };
+        updateStars(selectedRating);
+
+        stars.forEach(s => {
+          s.addEventListener('click', () => {
+            selectedRating = parseInt(s.getAttribute('data-rating'));
+            updateStars(selectedRating);
+          });
+        });
+
+        if (complaint.citizenFeedback) {
+          document.getElementById('citizen-feedback-text').value = complaint.citizenFeedback;
+        }
+
+        document.getElementById('btn-submit-feedback').addEventListener('click', () => {
+          const txt = document.getElementById('citizen-feedback-text').value.trim();
+          Complaints.submitFeedback(complaint.id, selectedRating, txt, user);
+          UI.showToast({ type: 'success', title: 'Feedback Recorded', message: 'Thank you for grading the municipal resolution.' });
+        });
+
+        document.getElementById('btn-reopen-modal').addEventListener('click', () => {
+          UI.openModal('reopen-modal');
+        });
+
+        document.getElementById('btn-confirm-reopen').addEventListener('click', () => {
+          const reason = document.getElementById('reopen-reason-text').value.trim();
+          if (!reason || reason.length < 10) {
+            UI.showToast({ type: 'warning', title: 'Reason Required', message: 'Please provide detailed reason for reopening (min 10 characters).' });
+            return;
+          }
+          Complaints.reopenIssue(complaint.id, reason, user);
+          UI.closeModal('reopen-modal');
+          UI.showToast({ type: 'warning', title: 'Issue Reopened', message: 'Supervisor notified for re-inspection.' });
+          setTimeout(() => window.location.reload(), 800);
+        });
+      }
+
+      // Mini Leaflet Map Pin
+      if (complaint.lat && complaint.lng) {
+        const map = L.map('complaint-detail-map', { zoomControl: false, scrollWheelZoom: false })
+          .setView([complaint.lat, complaint.lng], 14);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png').addTo(map);
+        L.marker([complaint.lat, complaint.lng]).addTo(map).bindPopup(complaint.title).openPopup();
+      }
+    });
+  </script>
+</body>
+</html>
