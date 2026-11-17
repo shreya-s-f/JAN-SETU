@@ -11,11 +11,17 @@
  */
 
 const http = require('http');
+const https = require('https');
 const fs = require('fs');
 const path = require('path');
 const url = require('url');
+const crypto = require('crypto');
 
 const PORT = process.env.PORT || 3000;
+const AUTH_SECRET = process.env.AUTH_SECRET || 'jansetu_secure_token_secret_2026_xyz_production';
+const APP_URL = process.env.APP_URL || `http://localhost:${PORT}`;
+const RESEND_API_KEY = process.env.RESEND_API_KEY || '';
+const RESEND_FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev';
 const DATA_DIR = path.join(__dirname, 'data');
 const DB_FILE = path.join(DATA_DIR, 'database.json');
 
@@ -225,21 +231,110 @@ function getInitialSeedData() {
   };
 }
 
-function loadDatabase() {
-  if (!fs.existsSync(DB_FILE)) {
-    const initial = getInitialSeedData();
-    fs.writeFileSync(DB_FILE, JSON.stringify(initial, null, 2), 'utf8');
-    return initial;
-  }
+// ==========================================
+// SECURITY & CRYPTO AUTH HELPERS
+// ==========================================
+function hashPassword(password, salt = crypto.randomBytes(16).toString('hex')) {
+  const hash = crypto.pbkdf2Sync(password, salt, 10000, 64, 'sha512').toString('hex');
+  return { salt, hash };
+}
+
+function verifyPassword(password, salt, storedHash) {
+  if (!password || !salt || !storedHash) return false;
   try {
-    const raw = fs.readFileSync(DB_FILE, 'utf8');
-    return JSON.parse(raw);
-  } catch (e) {
-    console.error('Error reading database file, reinitializing:', e);
-    const initial = getInitialSeedData();
-    fs.writeFileSync(DB_FILE, JSON.stringify(initial, null, 2), 'utf8');
-    return initial;
+    const hash = crypto.pbkdf2Sync(password, salt, 10000, 64, 'sha512').toString('hex');
+    const a = Buffer.from(hash, 'hex');
+    const b = Buffer.from(storedHash, 'hex');
+    if (a.length !== b.length) return false;
+    return crypto.timingSafeEqual(a, b);
+  } catch (err) {
+    return false;
   }
+}
+
+function createToken(payload) {
+  const header = Buffer.from(JSON.stringify({ alg: 'HS256', typ: 'JWT' })).toString('base64url');
+  const body = Buffer.from(JSON.stringify({
+    ...payload,
+    iat: Date.now(),
+    exp: Date.now() + 7 * 24 * 60 * 60 * 1000 // 7 days valid
+  })).toString('base64url');
+  const signature = crypto.createHmac('sha256', AUTH_SECRET).update(`${header}.${body}`).digest('base64url');
+  return `${header}.${body}.${signature}`;
+}
+
+function verifyToken(token) {
+  if (!token || typeof token !== 'string') return null;
+  const parts = token.split('.');
+  if (parts.length !== 3) return null;
+  const [header, body, signature] = parts;
+  const expectedSig = crypto.createHmac('sha256', AUTH_SECRET).update(`${header}.${body}`).digest('base64url');
+  if (signature !== expectedSig) return null;
+  try {
+    const payload = JSON.parse(Buffer.from(body, 'base64url').toString('utf8'));
+    if (payload.exp && Date.now() > payload.exp) return null;
+    return payload;
+  } catch (e) {
+    return null;
+  }
+}
+
+function sanitizeUser(user) {
+  if (!user) return null;
+  const { password, passwordHash, salt, verificationToken, ...safe } = user;
+  return safe;
+}
+
+function getAuthUser(req, db) {
+  const authHeader = req.headers['authorization'] || '';
+  if (!authHeader.startsWith('Bearer ')) return null;
+  const token = authHeader.substring(7).trim();
+  const payload = verifyToken(token);
+  if (!payload || !payload.userId) return null;
+  const user = db.users.find(u => u.id === payload.userId);
+  return user ? sanitizeUser(user) : null;
+}
+
+function loadDatabase() {
+  let db;
+  if (!fs.existsSync(DB_FILE)) {
+    db = getInitialSeedData();
+    saveDatabase(db);
+  } else {
+    try {
+      const raw = fs.readFileSync(DB_FILE, 'utf8');
+      db = JSON.parse(raw);
+    } catch (e) {
+      console.error('Error reading database file, reinitializing:', e);
+      db = getInitialSeedData();
+      saveDatabase(db);
+    }
+  }
+
+  // Automatic Migration: Upgrade any legacy plain-text passwords to secure salted hashes
+  let migrated = false;
+  if (db && Array.isArray(db.users)) {
+    db.users.forEach(u => {
+      if (u.password && (!u.passwordHash || !u.salt)) {
+        const { salt, hash } = hashPassword(u.password);
+        u.salt = salt;
+        u.passwordHash = hash;
+        delete u.password;
+        migrated = true;
+      }
+      if (typeof u.emailVerified === 'undefined') {
+        // Pre-verify existing seed/demo users
+        u.emailVerified = true;
+        migrated = true;
+      }
+    });
+  }
+
+  if (migrated) {
+    saveDatabase(db);
+  }
+
+  return db;
 }
 
 function saveDatabase(db) {
@@ -319,36 +414,90 @@ const server = http.createServer(async (req, res) => {
       });
     }
 
-    // 2. Auth: Login
-    if (pathname === '/api/auth/login' && method === 'POST') {
-      const { email, password } = await parseRequestBody(req);
-      const user = db.users.find(
-        u => u.email.toLowerCase() === (email || '').toLowerCase().trim() && u.password === password
-      );
-      if (user) {
-        return sendJson(res, 200, { success: true, user });
+    // 2. Auth: Current User Profile
+    if (pathname === '/api/auth/me' && method === 'GET') {
+      const authUser = getAuthUser(req, db);
+      if (!authUser) {
+        return sendJson(res, 401, { success: false, message: 'Unauthenticated or session expired.' });
       }
-      return sendJson(res, 401, { success: false, message: 'Invalid credentials. Use demo accounts or verify email/password.' });
+      return sendJson(res, 200, { success: true, user: authUser });
     }
 
-    // 3. Auth: Register
+    // 3. Auth: Login
+    if (pathname === '/api/auth/login' && method === 'POST') {
+      const { email, password } = await parseRequestBody(req);
+      const cleanEmail = (email || '').toLowerCase().trim();
+      
+      if (!cleanEmail || !password) {
+        return sendJson(res, 400, { success: false, message: 'Email and password are required.' });
+      }
+
+      const user = db.users.find(u => u.email.toLowerCase() === cleanEmail);
+      if (!user) {
+        return sendJson(res, 401, { success: false, message: 'Invalid credentials. User not found.' });
+      }
+
+      let passwordValid = false;
+      if (user.passwordHash && user.salt) {
+        passwordValid = verifyPassword(password, user.salt, user.passwordHash);
+      } else if (user.password) {
+        passwordValid = (user.password === password);
+      }
+
+      if (!passwordValid) {
+        return sendJson(res, 401, { success: false, message: 'Invalid email or password.' });
+      }
+
+      // Check email verification
+      if (user.emailVerified === false) {
+        return sendJson(res, 403, {
+          success: false,
+          code: 'EMAIL_NOT_VERIFIED',
+          message: 'Your email address is not verified yet. Please check your inbox or request a new verification link.'
+        });
+      }
+
+      const safeUser = sanitizeUser(user);
+      const token = createToken({ userId: user.id, email: user.email, role: user.role });
+      return sendJson(res, 200, { success: true, token, user: safeUser });
+    }
+
+    // 4. Auth: Register
     if (pathname === '/api/auth/register' && method === 'POST') {
       const userData = await parseRequestBody(req);
-      const exists = db.users.some(u => u.email.toLowerCase() === userData.email.toLowerCase().trim());
+      const cleanEmail = (userData.email || '').toLowerCase().trim();
+
+      if (!userData.name || !cleanEmail || !userData.password) {
+        return sendJson(res, 400, { success: false, message: 'Name, email, and password are required.' });
+      }
+
+      if (userData.password.length < 6) {
+        return sendJson(res, 400, { success: false, message: 'Password must be at least 6 characters long.' });
+      }
+
+      const exists = db.users.some(u => u.email.toLowerCase() === cleanEmail);
       if (exists) {
         return sendJson(res, 400, { success: false, message: 'An account with this email already exists.' });
       }
 
+      const { salt, hash } = hashPassword(userData.password);
+      const verificationToken = crypto.randomBytes(32).toString('hex');
+      const verificationExpires = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+
       const newUser = {
         id: 'usr-' + Date.now(),
-        name: userData.name,
-        email: userData.email.trim(),
-        password: userData.password,
+        name: userData.name.trim(),
+        email: cleanEmail,
+        passwordHash: hash,
+        salt: salt,
         phone: userData.phone || '+91 98000 00000',
         city: userData.city || 'Bengaluru',
         ward: userData.ward || 'General Ward',
-        role: 'citizen',
+        role: userData.role || 'citizen',
         impactScore: 50,
+        emailVerified: false,
+        verificationToken: verificationToken,
+        verificationExpires: verificationExpires,
         memberSince: new Date().toISOString(),
         badges: ['First Reporter']
       };
@@ -360,15 +509,22 @@ const server = http.createServer(async (req, res) => {
         id: 'eml-' + Date.now(),
         to: newUser.email,
         recipientName: newUser.name,
-        subject: `Welcome to JanSetu, ${newUser.name}! 🇮🇳`,
-        template: 'registration',
+        subject: `JanSetu: Verify your email address, ${newUser.name}! 🇮🇳`,
+        template: 'email_verification',
         status: 'delivered',
         sentAt: new Date().toISOString(),
-        bodyPreview: `Account created for ${newUser.name} in ${newUser.city}. Starting points: 50.`
+        bodyPreview: `Account created for ${newUser.name}. Click verification link to activate.`
       });
 
       saveDatabase(db);
-      return sendJson(res, 201, { success: true, user: newUser });
+      const safeUser = sanitizeUser(newUser);
+      return sendJson(res, 201, {
+        success: true,
+        requiresVerification: true,
+        verificationToken: verificationToken,
+        message: 'Account created! Please check your email to verify your account.',
+        user: safeUser
+      });
     }
 
     // 4. Complaints: List & Filter
