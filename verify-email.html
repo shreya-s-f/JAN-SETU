@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Email Verification — JanSetu 🇮🇳</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <style>
+    .verify-page-wrapper {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1.5rem;
+      background: radial-gradient(circle at top, rgba(217, 4, 41, 0.08) 0%, #F8FAFC 75%);
+    }
+    .verify-card {
+      width: 100%;
+      max-width: 500px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-xl);
+      padding: 2.5rem;
+      box-shadow: var(--shadow-lg);
+      text-align: center;
+    }
+    .status-icon-wrap {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      margin: 0 auto 1.5rem;
+      transition: all var(--transition-normal);
+    }
+    .status-icon-loading {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+    .status-icon-success {
+      background: var(--success-bg);
+      color: var(--success);
+      border: 2px solid rgba(16, 185, 129, 0.3);
+    }
+    .status-icon-error {
+      background: var(--danger-bg);
+      color: var(--danger);
+      border: 2px solid rgba(239, 68, 68, 0.3);
+    }
+    .resend-box {
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      margin-top: 1.75rem;
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="verify-page-wrapper">
+    <div class="verify-card">
+      <a href="index.html" class="brand-logo" style="justify-content: center; margin-bottom: 1.5rem;">
+        <span class="flag-badge">🇮🇳</span>
+        <span>JAN<span class="logo-accent">SETU</span></span>
+      </a>
+
+      <!-- Dynamic Status Container -->
+      <div id="verify-status-container">
+        <div class="status-icon-wrap status-icon-loading">
+          <i class="fa-solid fa-envelope-circle-check"></i>
+        </div>
+        <h2 id="verify-title" style="font-size: 1.5rem; font-weight: 800; margin-bottom: 0.5rem;">Email Verification</h2>
+        <p id="verify-desc" class="text-muted" style="font-size: 0.95rem; margin-bottom: 1.5rem;">
+          Please check your email inbox for the verification link sent to your registered address.
+        </p>
+
+        <div id="verify-action-area">
+          <a href="login.html" class="btn btn-primary btn-block">Back to Sign In</a>
+        </div>
+      </div>
+
+      <!-- Resend Verification Box -->
+      <div class="resend-box">
+        <h4 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 0.4rem;">
+          <i class="fa-solid fa-paper-plane text-primary"></i> Didn't receive an email?
+        </h4>
+        <p class="text-muted" style="font-size: 0.85rem; margin-bottom: 1rem;">
+          Enter your registered email address to receive a fresh verification link.
+        </p>
+        <form id="resend-form">
+          <div class="form-group mb-2">
+            <input type="email" id="resend-email" class="form-control" placeholder="name@domain.com" required>
+          </div>
+          <button type="submit" class="btn btn-outline btn-block btn-sm" id="btn-resend-submit">
+            Resend Verification Link
+          </button>
+        </form>
+      </div>
+
+      <div class="text-center mt-3" style="font-size: 0.85rem; color: var(--text-dim);">
+        Need help? Visit our <a href="about.html">Support & Architecture Guide</a>.
+      </div>
+    </div>
+  </div>
+
+  <div id="toast-container"></div>
+
+  <!-- Scripts -->
+  <script src="js/utils.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/notifications.js"></script>
+  <script src="js/ui.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const token = urlParams.get('token');
+      const emailParam = urlParams.get('email');
+
+      if (emailParam) {
+        const emailInput = document.getElementById('resend-email');
+        if (emailInput) emailInput.value = emailParam;
+      }
+
+      // If token is provided in URL, perform verification automatically
+      if (token) {
+        const iconWrap = document.querySelector('.status-icon-wrap');
+        const titleEl = document.getElementById('verify-title');
+        const descEl = document.getElementById('verify-desc');
+        const actionArea = document.getElementById('verify-action-area');
+
+        iconWrap.className = 'status-icon-wrap status-icon-loading';
+        iconWrap.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+        titleEl.textContent = 'Verifying Your Account...';
+        descEl.textContent = 'Validating cryptographic security token with the JanSetu municipal server.';
+
+        try {
+          const res = await API.auth.verifyEmail(token);
+          if (res.success) {
+            iconWrap.className = 'status-icon-wrap status-icon-success';
+            iconWrap.innerHTML = '<i class="fa-solid fa-check"></i>';
+            titleEl.textContent = 'Email Verified! 🎉';
+            descEl.innerHTML = `Welcome <strong>${res.user?.name || 'Citizen'}</strong>! Your email has been verified and your account is active.`;
+            
+            if (res.token) API.setToken(res.token);
+            if (res.user) Storage.set(STORAGE_KEYS.CURRENT_USER, res.user);
+
+            actionArea.innerHTML = `
+              <a href="citizen-dashboard.html" class="btn btn-primary btn-block btn-lg">
+                Go to Citizen Dashboard <i class="fa-solid fa-arrow-right"></i>
+              </a>
+            `;
+
+            UI.showToast({
+              type: 'success',
+              title: 'Verification Complete',
+              message: 'Redirecting to your dashboard in 3 seconds...'
+            });
+
+            setTimeout(() => {
+              window.location.href = 'citizen-dashboard.html';
+            }, 3000);
+          } else {
+            iconWrap.className = 'status-icon-wrap status-icon-error';
+            iconWrap.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+            titleEl.textContent = 'Verification Failed';
+            descEl.textContent = res.message || 'This verification link is invalid or has expired.';
+            actionArea.innerHTML = `
+              <a href="login.html" class="btn btn-secondary btn-block">Back to Sign In</a>
+            `;
+            UI.showToast({
+              type: 'error',
+              title: 'Verification Failed',
+              message: res.message || 'Invalid or expired token.'
+            });
+          }
+        } catch (err) {
+          iconWrap.className = 'status-icon-wrap status-icon-error';
+          iconWrap.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i>';
+          titleEl.textContent = 'Connection Error';
+          descEl.textContent = 'Unable to reach the verification server. Please try again.';
+        }
+      }
+
+      // Handle Resend Form Submission
+      const resendForm = document.getElementById('resend-form');
+      const resendBtn = document.getElementById('btn-resend-submit');
+      if (resendForm) {
+        resendForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const email = document.getElementById('resend-email').value.trim();
+          if (!email) return;
+
+          const origText = resendBtn.innerHTML;
+          resendBtn.disabled = true;
+          resendBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending...';
+
+          try {
+            const res = await API.auth.resendVerification(email);
+            resendBtn.disabled = false;
+            resendBtn.innerHTML = origText;
+
+            if (res.success) {
+              UI.showToast({
+                type: 'success',
+                title: 'Email Sent',
+                message: res.message || 'Check your inbox for the fresh link.'
+              });
+            } else {
+              UI.showToast({
+                type: 'error',
+                title: 'Unable to Resend',
+                message: res.message || 'Account not found or already verified.'
+              });
+            }
+          } catch (err) {
+            resendBtn.disabled = false;
+            resendBtn.innerHTML = origText;
+            UI.showToast({ type: 'error', title: 'Error', message: 'Could not send verification email.' });
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

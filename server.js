@@ -295,6 +295,78 @@ function getAuthUser(req, db) {
   return user ? sanitizeUser(user) : null;
 }
 
+// ==========================================
+// EMAIL NOTIFICATION & VERIFICATION SERVICE
+// ==========================================
+async function sendVerificationEmail(user, token) {
+  const verifyUrl = `${APP_URL}/verify-email.html?token=${encodeURIComponent(token)}`;
+  const subject = `JanSetu: Verify your email address, ${user.name}! 🇮🇳`;
+  const htmlContent = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px;">
+      <div style="text-align: center; margin-bottom: 20px;">
+        <h2 style="color: #D90429; margin: 0;">🇮🇳 JANSETU</h2>
+        <p style="color: #64748b; font-size: 14px;">Your Voice. Your City. Your JanSetu.</p>
+      </div>
+      <p>Namaste <strong>${user.name}</strong>,</p>
+      <p>Thank you for joining JanSetu, your smart civic reporting and municipal verification network.</p>
+      <p>Please click the button below to verify your email address and activate your citizen account:</p>
+      <div style="text-align: center; margin: 30px 0;">
+        <a href="${verifyUrl}" style="background: #D90429; color: #ffffff; padding: 12px 28px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">Verify Email Address</a>
+      </div>
+      <p style="font-size: 13px; color: #64748b;">Or copy and paste this link in your browser:<br><a href="${verifyUrl}">${verifyUrl}</a></p>
+      <p style="font-size: 12px; color: #94a3b8; margin-top: 30px; border-top: 1px solid #e2e8f0; padding-top: 15px;">This verification link will expire in 24 hours. If you did not create an account on JanSetu, please ignore this email.</p>
+    </div>
+  `;
+
+  // Try Resend API if key is present
+  if (RESEND_API_KEY) {
+    try {
+      const payload = JSON.stringify({
+        from: RESEND_FROM_EMAIL,
+        to: user.email,
+        subject: subject,
+        html: htmlContent
+      });
+
+      const options = {
+        hostname: 'api.resend.com',
+        port: 443,
+        path: '/emails',
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${RESEND_API_KEY}`,
+          'Content-Type': 'application/json',
+          'Content-Length': Buffer.byteLength(payload)
+        }
+      };
+
+      const request = https.request(options, (res) => {
+        let body = '';
+        res.on('data', chunk => body += chunk);
+        res.on('end', () => {
+          console.log(`[Resend Email] Status: ${res.statusCode} to ${user.email}`);
+        });
+      });
+      request.on('error', err => {
+        console.warn('[Resend Email Error]:', err.message);
+      });
+      request.write(payload);
+      request.end();
+    } catch (e) {
+      console.warn('[Resend Exception]:', e.message);
+    }
+  } else {
+    // Safe Development Fallback: Log clearly to console
+    console.log('====================================================');
+    console.log(`✉️ [DEV EMAIL SIMULATION] Verification Email to: ${user.email}`);
+    console.log(`🔗 Verification Link: ${verifyUrl}`);
+    console.log(`🔑 Verification Token: ${token}`);
+    console.log('====================================================');
+  }
+
+  return { verifyUrl, subject, htmlContent };
+}
+
 function loadDatabase() {
   let db;
   if (!fs.existsSync(DB_FILE)) {
@@ -504,7 +576,9 @@ const server = http.createServer(async (req, res) => {
 
       db.users.push(newUser);
 
-      // Log simulated registration email
+      // Send & Log verification email
+      await sendVerificationEmail(newUser, verificationToken);
+
       db.emailLogs.unshift({
         id: 'eml-' + Date.now(),
         to: newUser.email,
@@ -524,6 +598,88 @@ const server = http.createServer(async (req, res) => {
         verificationToken: verificationToken,
         message: 'Account created! Please check your email to verify your account.',
         user: safeUser
+      });
+    }
+
+    // 5. Auth: Verify Email (GET or POST)
+    if (pathname === '/api/auth/verify-email' && (method === 'GET' || method === 'POST')) {
+      let token = parsedUrl.query.token;
+      if (!token && method === 'POST') {
+        const body = await parseRequestBody(req);
+        token = body.token;
+      }
+
+      if (!token) {
+        return sendJson(res, 400, { success: false, message: 'Missing verification token.' });
+      }
+
+      const user = db.users.find(u => u.verificationToken === token);
+      if (!user) {
+        return sendJson(res, 400, { success: false, message: 'Invalid verification token or account is already verified.' });
+      }
+
+      if (user.verificationExpires && new Date(user.verificationExpires) < new Date()) {
+        return sendJson(res, 400, { success: false, message: 'Verification token has expired. Please request a new verification email.' });
+      }
+
+      user.emailVerified = true;
+      delete user.verificationToken;
+      delete user.verificationExpires;
+
+      // Welcome bonus points
+      user.impactScore = (user.impactScore || 50) + 20;
+
+      saveDatabase(db);
+      const safeUser = sanitizeUser(user);
+      const authToken = createToken({ userId: user.id, email: user.email, role: user.role });
+
+      return sendJson(res, 200, {
+        success: true,
+        message: 'Email address successfully verified! Your citizen account is now active.',
+        token: authToken,
+        user: safeUser
+      });
+    }
+
+    // 6. Auth: Resend Verification Email
+    if (pathname === '/api/auth/resend-verification' && method === 'POST') {
+      const { email } = await parseRequestBody(req);
+      const cleanEmail = (email || '').toLowerCase().trim();
+
+      if (!cleanEmail) {
+        return sendJson(res, 400, { success: false, message: 'Email address is required.' });
+      }
+
+      const user = db.users.find(u => u.email.toLowerCase() === cleanEmail);
+      if (!user) {
+        return sendJson(res, 404, { success: false, message: 'No registered account found with this email address.' });
+      }
+
+      if (user.emailVerified) {
+        return sendJson(res, 400, { success: false, message: 'This email is already verified. You can sign in directly.' });
+      }
+
+      const newToken = crypto.randomBytes(32).toString('hex');
+      user.verificationToken = newToken;
+      user.verificationExpires = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+
+      await sendVerificationEmail(user, newToken);
+
+      db.emailLogs.unshift({
+        id: 'eml-' + Date.now(),
+        to: user.email,
+        recipientName: user.name,
+        subject: `JanSetu: Verify your email address, ${user.name}! 🇮🇳`,
+        template: 'email_verification',
+        status: 'delivered',
+        sentAt: new Date().toISOString(),
+        bodyPreview: `New verification link generated for ${user.email}.`
+      });
+
+      saveDatabase(db);
+      return sendJson(res, 200, {
+        success: true,
+        message: 'A fresh verification email has been dispatched. Please check your inbox.'
       });
     }
 
