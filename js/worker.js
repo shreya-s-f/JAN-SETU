@@ -10,15 +10,27 @@ const Worker = {
   /**
    * Initialize Worker Dashboard
    */
-  initDashboard() {
+  async initDashboard() {
     const user = Auth.getCurrentUser();
     if (!user) return;
 
-    const complaints = Storage.get(STORAGE_KEYS.COMPLAINTS, []);
+    let complaints = Storage.get(STORAGE_KEYS.COMPLAINTS, []);
+    if (window.API && API.complaints) {
+      try {
+        const liveList = await API.complaints.list();
+        if (liveList && liveList.length > 0) {
+          complaints = liveList;
+          Storage.set(STORAGE_KEYS.COMPLAINTS, liveList);
+        }
+      } catch (err) {
+        console.warn('API error fetching worker complaints:', err);
+      }
+    }
+
     // Find issues assigned to this worker or department
     const myIssues = complaints.filter(
-      c => (c.assignedWorker && c.assignedWorker.id === 'w-1') ||
-           (c.assignedWorker && c.assignedWorker.name === user.name)
+      c => (c.assignedWorker && (c.assignedWorker.id === 'w-1' || c.assignedWorker.name === user.name || c.assignedWorker.id === user.id)) ||
+           (c.status === 'assigned' || c.status === 'in_progress')
     );
 
     const active = myIssues.filter(c => c.status === 'assigned' || c.status === 'in_progress');
@@ -30,7 +42,7 @@ const Worker = {
     if (kpiActive) UI.animateCounter(kpiActive, active.length);
 
     const kpiInProgress = document.getElementById('worker-kpi-progress');
-    if (kpiInProgress) UI.animateCounter(kpiInProgress, inProgress.length);
+    if (kpiInProgress) UI.animateCounter(kpiProgress, inProgress.length);
 
     const kpiResolved = document.getElementById('worker-kpi-resolved');
     if (kpiResolved) UI.animateCounter(kpiResolved, resolved.length);

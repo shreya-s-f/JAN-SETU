@@ -10,14 +10,26 @@ const Admin = {
   /**
    * Initialize Admin Dashboard KPIs
    */
-  initDashboard() {
-    const complaints = Storage.get(STORAGE_KEYS.COMPLAINTS, []);
+  async initDashboard() {
+    let complaints = Storage.get(STORAGE_KEYS.COMPLAINTS, []);
+    if (window.API && API.complaints) {
+      try {
+        const liveList = await API.complaints.list();
+        if (liveList && liveList.length > 0) {
+          complaints = liveList;
+          Storage.set(STORAGE_KEYS.COMPLAINTS, liveList);
+        }
+      } catch (err) {
+        console.warn('API error fetching admin complaints:', err);
+      }
+    }
+
     const depts = Storage.get(STORAGE_KEYS.DEPARTMENTS, []);
     const workers = Storage.get(STORAGE_KEYS.WORKERS, []);
 
     const total = complaints.length;
     const resolved = complaints.filter(c => c.status === 'resolved').length;
-    const pendingVerification = complaints.filter(c => c.status === 'submitted').length;
+    const pendingVerification = complaints.filter(c => c.status === 'submitted' || c.status === 'under_review').length;
     const inProgress = complaints.filter(c => c.status === 'in_progress' || c.status === 'assigned').length;
     const critical = complaints.filter(c => c.priorityScore >= 80 && c.status !== 'resolved').length;
 

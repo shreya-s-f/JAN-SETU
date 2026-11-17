@@ -24,7 +24,7 @@ const Citizen = {
   /**
    * Initialize Citizen Dashboard
    */
-  initDashboard() {
+  async initDashboard() {
     const user = Auth.getCurrentUser();
     if (!user) return;
 
@@ -35,9 +35,21 @@ const Citizen = {
     const cityEl = document.getElementById('citizen-city-badge');
     if (cityEl) cityEl.textContent = user.city || 'Bengaluru';
 
-    // Calculate metrics
-    const complaints = Storage.get(STORAGE_KEYS.COMPLAINTS, []);
-    const userReports = complaints.filter(c => c.reportedBy && c.reportedBy.id === user.id);
+    // Fetch complaints from API or fallback to Storage
+    let complaints = Storage.get(STORAGE_KEYS.COMPLAINTS, []);
+    if (window.API && API.complaints) {
+      try {
+        const liveList = await API.complaints.list();
+        if (liveList && liveList.length > 0) {
+          complaints = liveList;
+          Storage.set(STORAGE_KEYS.COMPLAINTS, liveList);
+        }
+      } catch (err) {
+        console.warn('API error fetching live complaints, using cache:', err);
+      }
+    }
+
+    const userReports = complaints.filter(c => c.reportedBy && (c.reportedBy.id === user.id || c.reportedBy.email === user.email));
     const activeReports = userReports.filter(c => c.status !== 'resolved' && c.status !== 'rejected');
     const inProgressReports = userReports.filter(c => c.status === 'in_progress');
     const resolvedReports = userReports.filter(c => c.status === 'resolved');
@@ -63,6 +75,10 @@ const Citizen = {
 
     // Render Nearby/Trending Issues Map
     if (document.getElementById('citizen-map')) {
+      MapEngine.init('citizen-map', { center: [12.9719, 77.6412], zoom: 13 });
+      MapEngine.renderMarkers(complaints.slice(0, 10));
+    }
+  },
       MapEngine.init('citizen-map', { center: [12.9719, 77.6412], zoom: 13 });
       MapEngine.renderMarkers(complaints.slice(0, 10));
     }
