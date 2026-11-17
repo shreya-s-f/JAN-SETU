@@ -132,6 +132,7 @@
 
   <script src="js/utils.js"></script>
   <script src="js/storage.js"></script>
+  <script src="js/api.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/notifications.js"></script>
   <script src="js/priority.js"></script>
@@ -154,18 +155,43 @@
 
       // Handle custom form submit
       const form = document.getElementById('login-form');
+      const submitBtn = document.getElementById('btn-login-submit');
       if (form) {
-        form.addEventListener('submit', (e) => {
+        form.addEventListener('submit', async (e) => {
           e.preventDefault();
-          const email = document.getElementById('login-email').value;
+          const email = document.getElementById('login-email').value.trim();
           const pwd = document.getElementById('login-password').value;
 
-          const res = Auth.login(email, pwd);
-          if (res.success) {
-            UI.showToast({ type: 'success', title: 'Login Successful', message: `Welcome back, ${res.user.name}!` });
-            setTimeout(() => Auth.redirectByRole(res.user.role), 600);
-          } else {
-            UI.showToast({ type: 'error', title: 'Login Failed', message: res.message });
+          const originalText = submitBtn.innerHTML;
+          submitBtn.disabled = true;
+          submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Authenticating...';
+
+          try {
+            const res = await Auth.login(email, pwd);
+            if (res.success) {
+              UI.showToast({ type: 'success', title: 'Login Successful', message: `Welcome back, ${res.user.name}!` });
+              setTimeout(() => Auth.redirectByRole(res.user.role), 500);
+            } else {
+              submitBtn.disabled = false;
+              submitBtn.innerHTML = originalText;
+              if (res.code === 'EMAIL_NOT_VERIFIED') {
+                UI.showToast({
+                  type: 'warning',
+                  title: 'Email Verification Required',
+                  message: 'Please verify your email address. Check your inbox or click Resend Verification below.'
+                });
+                // Provide quick link to verify page
+                setTimeout(() => {
+                  window.location.href = `verify-email.html?email=${encodeURIComponent(email)}`;
+                }, 1500);
+              } else {
+                UI.showToast({ type: 'error', title: 'Authentication Failed', message: res.message });
+              }
+            }
+          } catch (err) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+            UI.showToast({ type: 'error', title: 'Error', message: 'Something went wrong. Please try again.' });
           }
         });
       }
