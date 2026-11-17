@@ -710,7 +710,7 @@ const Storage = {
 
     // 8. Application Settings
     const defaultSettings = {
-      theme: 'dark',
+      theme: 'light',
       emailNotifications: true,
       browserNotifications: true,
       soundAlerts: false,

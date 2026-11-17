@@ -20,8 +20,8 @@ const UI = {
    * Theme Manager (Dark / Light Mode)
    */
   initTheme() {
-    const settings = Storage.get(STORAGE_KEYS.SETTINGS, { theme: 'dark' });
-    const savedTheme = settings.theme || 'dark';
+    const settings = Storage.get(STORAGE_KEYS.SETTINGS, { theme: 'light' });
+    const savedTheme = settings.theme || 'light';
     document.documentElement.setAttribute('data-theme', savedTheme);
 
     const themeToggleBtn = document.getElementById('theme-toggle-btn');
