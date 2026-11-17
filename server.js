@@ -866,7 +866,100 @@ const server = http.createServer(async (req, res) => {
       return sendJson(res, 200, { success: true, notifications: notifs });
     }
 
-    // 14. Reset Database Endpoint
+    // 14. Flashcards Civic Learning Module
+    if (pathname === '/api/flashcards' && method === 'GET') {
+      const { category } = parsedUrl.query;
+      const flashcards = [
+        {
+          id: 'fc-1',
+          category: 'Waste Management',
+          categoryTag: 'waste',
+          icon: 'fa-solid fa-recycle',
+          question: 'What are the three primary waste streams mandated under Swachh Bharat and municipal bylaws?',
+          answer: '1. Wet Waste (Green Bin): Organic, kitchen, and food waste suitable for composting.\n2. Dry Waste (Blue Bin): Recyclable plastics, clean paper, glass, metal, and cardboard.\n3. Domestic Hazardous Waste (Red Bin/Bag): Sanitary waste, expired medicines, batteries, and e-waste.',
+          lawRef: 'Solid Waste Management Rules, 2016',
+          impactTip: 'Proper segregation at source cuts landfill methane emissions by up to 70% and earns +15 Civic Impact Points.'
+        },
+        {
+          id: 'fc-2',
+          category: 'Road Safety',
+          categoryTag: 'safety',
+          icon: 'fa-solid fa-shield-halved',
+          question: 'What legal protection does a "Good Samaritan" have when helping a road accident victim in India?',
+          answer: 'Good Samaritans are protected under Section 134A of the Motor Vehicles (Amendment) Act 2019. They cannot be detained, harassed, or forced to disclose their name or bear medical treatment expenses, and are immune from civil or criminal liability.',
+          lawRef: 'Motor Vehicles (Amendment) Act 2019, Section 134A',
+          impactTip: 'Prompt help during the "Golden Hour" saves over 50% of accident victims.'
+        },
+        {
+          id: 'fc-3',
+          category: 'Emergency Services',
+          categoryTag: 'emergency',
+          icon: 'fa-solid fa-phone-volume',
+          question: 'What single nationwide emergency response number integrates Police, Fire, and Ambulance services?',
+          answer: '112 (ERSS - Emergency Response Support System). Dialing 112 connects citizens to a unified 24/7 command center coordinating Police (100), Fire (101), Health/Ambulance (108), and Disaster Management teams with real-time GPS tracking.',
+          lawRef: 'Ministry of Home Affairs ERSS Initiative',
+          impactTip: 'Download the 112 India citizen app for one-touch SOS panic alerts with live location sharing.'
+        },
+        {
+          id: 'fc-4',
+          category: 'Public Cleanliness',
+          categoryTag: 'cleanliness',
+          icon: 'fa-solid fa-broom',
+          question: 'What are the legal spot-fines for dumping garbage in public places or open burning of leaves/waste?',
+          answer: 'Urban Local Bodies impose spot fines ranging from ₹500 to ₹5,000 for public littering and open garbage dumping. Open burning of leaves, plastic, or municipal waste incurs penalties up to ₹25,000 under National Green Tribunal (NGT) environmental directives.',
+          lawRef: 'NGT Air Pollution Directives & Municipal Bye-laws',
+          impactTip: 'Report recurring black spots on JanSetu so mechanized sweeping squads can clear and sanitize the spot.'
+        },
+        {
+          id: 'fc-5',
+          category: 'Water Conservation',
+          categoryTag: 'water',
+          icon: 'fa-solid fa-droplet',
+          question: 'Why is Rooftop Rainwater Harvesting (RWH) mandatory for properties in urban centers?',
+          answer: 'In major cities like Bengaluru (BWSSB regulations) and Chennai, RWH is mandatory on sites measuring 1,200 sq.ft and above. It replenishes depleted deep aquifers, controls localized urban street flooding, and ensures sustainable groundwater levels.',
+          lawRef: 'Urban Municipal Water Supply Bylaws & RWH Norms',
+          impactTip: 'A 1,000 sq.ft rooftop in a city with 900mm annual rainfall can harvest over 80,000 liters of water each year.'
+        },
+        {
+          id: 'fc-6',
+          category: 'Civic Transparency',
+          categoryTag: 'civic',
+          icon: 'fa-solid fa-scale-balanced',
+          question: 'What is the mandatory time limit for Public Information Officers (PIO) to respond under the RTI Act?',
+          answer: 'Standard requests must receive a formal response within 30 days of application receipt. If the requested information concerns the "Life or Liberty" of any citizen, the information must be provided strictly within 48 hours.',
+          lawRef: 'Right to Information Act, 2005 (Section 7)',
+          impactTip: 'JanSetu provides transparent tracking logs and audit trails so public grievances never get lost in bureaucratic silos.'
+        },
+        {
+          id: 'fc-7',
+          category: 'Roads & Infrastructure',
+          categoryTag: 'roads',
+          icon: 'fa-solid fa-road',
+          question: 'How does JanSetu calculate the Civic Priority Score for road defects and potholes?',
+          answer: 'The algorithmic Civic Priority Score (0-100) factors in: physical hazard severity (crater depth/width), estimated daily traffic and citizens affected, community upvotes, proximity to essential infrastructure (schools, transit stops, hospitals), and age of report.',
+          lawRef: 'JanSetu Smart Civic Priority Matrix',
+          impactTip: 'A score of 80+ marks an issue as Critical, triggering automated dispatch and SMS/Email escalation.'
+        },
+        {
+          id: 'fc-8',
+          category: 'Digital Safety',
+          categoryTag: 'digital',
+          icon: 'fa-solid fa-user-lock',
+          question: 'Where can citizens immediately report cyber financial fraud or digital identity theft in India?',
+          answer: 'Call the National Cyber Financial Fraud Helpline 1930 immediately within the golden hour to freeze compromised accounts, or file a complaint online at the official National Cyber Crime Reporting Portal (cybercrime.gov.in).',
+          lawRef: 'Indian Cyber Crime Coordination Centre (I4C)',
+          impactTip: 'Never share OTPs, UPI PINs, or remote screen sharing access (AnyDesk, TeamViewer) with unverified callers.'
+        }
+      ];
+
+      let list = flashcards;
+      if (category && category !== 'all') {
+        list = list.filter(f => f.categoryTag === category || f.category.toLowerCase().includes(category.toLowerCase()));
+      }
+      return sendJson(res, 200, { success: true, count: list.length, flashcards: list });
+    }
+
+    // 15. Reset Database Endpoint
     if (pathname === '/api/reset' && method === 'POST') {
       const initial = getInitialSeedData();
       saveDatabase(initial);

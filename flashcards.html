@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Civic Learning & Flashcards — JanSetu 🇮🇳</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <style>
+    .flashcards-container {
+      max-width: 820px;
+      margin: 2.5rem auto 4rem;
+      padding: 0 1.5rem;
+    }
+
+    /* Category Filter Pills */
+    .filter-pills-row {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 2rem;
+    }
+
+    .filter-pill-btn {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      padding: 0.45rem 1rem;
+      border-radius: var(--radius-full);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .filter-pill-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .filter-pill-btn.active {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    /* 3D Flashcard Flip Scene */
+    .flashcard-scene {
+      perspective: 1200px;
+      width: 100%;
+      height: 400px;
+      margin: 0 auto 1.75rem;
+      cursor: pointer;
+    }
+
+    .flashcard-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transform-style: preserve-3d;
+      transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+      border-radius: var(--radius-xl);
+    }
+
+    .flashcard-scene.is-flipped .flashcard-inner {
+      transform: rotateY(180deg);
+    }
+
+    .flashcard-face {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      border-radius: var(--radius-xl);
+      border: 1.5px solid var(--border-color);
+      background: var(--bg-surface);
+      padding: 2.5rem 2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: var(--shadow-lg);
+      overflow-y: auto;
+    }
+
+    .flashcard-front {
+      border-top: 5px solid var(--primary);
+    }
+
+    .flashcard-back {
+      transform: rotateY(180deg);
+      border-top: 5px solid var(--success);
+      background: linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%);
+    }
+
+    .card-top-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .card-category-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: var(--primary-light);
+      color: var(--primary);
+      border: 1px solid var(--primary-border);
+      padding: 0.3rem 0.8rem;
+      border-radius: var(--radius-full);
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .flip-instruction {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .card-question-text {
+      font-size: clamp(1.25rem, 2.5vw, 1.65rem);
+      font-weight: 800;
+      color: var(--text-main);
+      line-height: 1.4;
+      margin: 1.5rem 0;
+      text-align: center;
+    }
+
+    .card-answer-text {
+      font-size: 1rem;
+      color: var(--text-main);
+      line-height: 1.65;
+      margin: 1rem 0;
+      white-space: pre-line;
+    }
+
+    .law-reference-box {
+      background: var(--bg-surface-elevated);
+      border-left: 3px solid var(--success);
+      border-radius: var(--radius-sm);
+      padding: 0.65rem 0.9rem;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-top: 0.75rem;
+    }
+
+    .impact-tip-box {
+      background: #FFFBEB;
+      border: 1px solid #FCD34D;
+      border-radius: var(--radius-sm);
+      padding: 0.65rem 0.9rem;
+      font-size: 0.82rem;
+      color: #92400E;
+      margin-top: 0.75rem;
+    }
+
+    /* Controls Bar */
+    .flashcard-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 1rem 1.5rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .progress-track-wrap {
+      flex: 1;
+      max-width: 280px;
+    }
+
+    .progress-bar-bg {
+      height: 7px;
+      background: var(--bg-surface-elevated);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+      margin-top: 0.35rem;
+    }
+
+    .progress-bar-val {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      border-radius: var(--radius-full);
+      transition: width 0.3s ease;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navbar -->
+  <header class="top-navbar">
+    <div class="d-flex align-center gap-2">
+      <a href="index.html" class="brand-logo">
+        <span class="flag-badge">🇮🇳</span>
+        <span>JAN<span class="logo-accent">SETU</span></span>
+      </a>
+    </div>
+
+    <ul class="nav-menu">
+      <li><a href="index.html" class="nav-link">Home</a></li>
+      <li><a href="explore-issues.html" class="nav-link">Explore City</a></li>
+      <li><a href="flashcards.html" class="nav-link active">Civic Learning</a></li>
+      <li><a href="transparency.html" class="nav-link">Transparency</a></li>
+      <li><a href="about.html" class="nav-link">About</a></li>
+    </ul>
+
+    <div class="nav-actions">
+      <button class="icon-btn" id="theme-toggle-btn" aria-label="Toggle Theme">
+        <i class="fa-regular fa-sun"></i>
+      </button>
+      <div id="nav-user-container">
+        <a href="login.html" class="btn btn-primary btn-sm">Login</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <div class="container">
+    <div class="flashcards-container">
+      <div class="section-header text-center" style="margin-bottom: 2rem;">
+        <span class="section-tag"><i class="fa-solid fa-graduation-cap"></i> Civic Intelligence & Knowledge</span>
+        <h1 class="section-title">Civic Responsibility Flashcards</h1>
+        <p class="section-description">
+          Empowering citizens with essential knowledge on waste segregation, road safety, emergency helplines, water conservation, and public rights.
+        </p>
+      </div>
+
+      <!-- Category Filter Pills -->
+      <div class="filter-pills-row" id="category-pills">
+        <button class="filter-pill-btn active" data-category="all">All Topics</button>
+        <button class="filter-pill-btn" data-category="waste">Waste Management</button>
+        <button class="filter-pill-btn" data-category="safety">Road Safety</button>
+        <button class="filter-pill-btn" data-category="emergency">Emergency Services</button>
+        <button class="filter-pill-btn" data-category="cleanliness">Public Cleanliness</button>
+        <button class="filter-pill-btn" data-category="water">Water Conservation</button>
+        <button class="filter-pill-btn" data-category="civic">Civic Transparency</button>
+        <button class="filter-pill-btn" data-category="roads">Infrastructure</button>
+        <button class="filter-pill-btn" data-category="digital">Digital Safety</button>
+      </div>
+
+      <!-- Flashcard 3D Flip Component -->
+      <div class="flashcard-scene" id="flashcard-scene" title="Click or tap to flip card">
+        <div class="flashcard-inner">
+          <!-- Front Face (Question) -->
+          <div class="flashcard-face flashcard-front">
+            <div class="card-top-meta">
+              <span class="card-category-badge" id="card-category-front">
+                <i class="fa-solid fa-recycle"></i> Waste Management
+              </span>
+              <span class="flip-instruction">
+                <i class="fa-solid fa-arrows-rotate"></i> Click to Reveal Answer
+              </span>
+            </div>
+
+            <div class="card-question-text" id="card-question">
+              Loading civic flashcard...
+            </div>
+
+            <div class="d-flex justify-between align-center" style="font-size: 0.8rem; color: var(--text-dim); border-top: 1px solid var(--border-color); padding-top: 0.85rem;">
+              <span><i class="fa-solid fa-lightbulb text-warning"></i> Civic Awareness Tip</span>
+              <span id="card-index-indicator">Card 1 of 8</span>
+            </div>
+          </div>
+
+          <!-- Back Face (Answer) -->
+          <div class="flashcard-face flashcard-back">
+            <div class="card-top-meta">
+              <span class="badge badge-success">
+                <i class="fa-solid fa-circle-check"></i> Official Civic Answer
+              </span>
+              <span class="flip-instruction">
+                <i class="fa-solid fa-arrows-rotate"></i> Click to Flip Back
+              </span>
+            </div>
+
+            <div>
+              <div class="card-answer-text" id="card-answer"></div>
+              <div class="law-reference-box" id="card-law"></div>
+              <div class="impact-tip-box" id="card-tip"></div>
+            </div>
+
+            <div class="d-flex justify-between align-center" style="font-size: 0.8rem; color: var(--text-dim); border-top: 1px solid var(--border-color); padding-top: 0.75rem;">
+              <span class="text-success fw-bold"><i class="fa-solid fa-award"></i> +10 Civic Knowledge</span>
+              <span>Tap anywhere to flip back</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Controls Bar -->
+      <div class="flashcard-controls">
+        <button class="btn btn-secondary btn-sm" id="btn-prev-card">
+          <i class="fa-solid fa-arrow-left"></i> Previous
+        </button>
+
+        <div class="progress-track-wrap text-center">
+          <div style="font-size: 0.82rem; font-weight: 700;" id="progress-text">Card 1 of 8</div>
+          <div class="progress-bar-bg">
+            <div class="progress-bar-val" id="progress-bar-fill" style="width: 12.5%;"></div>
+          </div>
+        </div>
+
+        <div class="d-flex gap-1">
+          <button class="btn btn-outline btn-sm" id="btn-shuffle-cards" title="Shuffle flashcards">
+            <i class="fa-solid fa-shuffle"></i>
+          </button>
+          <button class="btn btn-primary btn-sm" id="btn-next-card">
+            Next <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Action Callout -->
+      <div class="card mt-4 text-center" style="background: var(--bg-surface); padding: 1.5rem;">
+        <h4 style="margin-bottom: 0.5rem; font-size: 1.1rem;">Spotted a civic issue in your neighborhood?</h4>
+        <p class="text-muted" style="font-size: 0.9rem; max-width: 500px; margin: 0 auto 1.25rem;">
+          Put your civic knowledge into action. Report broken roads, water leakages, or open garbage on JanSetu.
+        </p>
+        <div class="d-flex gap-2 justify-between" style="justify-content: center; flex-wrap: wrap;">
+          <a href="report-issue.html" class="btn btn-primary btn-sm">
+            <i class="fa-solid fa-plus-circle"></i> Report Civic Defect
+          </a>
+          <a href="explore-issues.html" class="btn btn-outline btn-sm">
+            <i class="fa-solid fa-map"></i> View Problem Map
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast-container"></div>
+
+  <!-- Scripts -->
+  <script src="js/utils.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/ui.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      UI.init();
+
+      let cards = [];
+      let currentIndex = 0;
+      let activeCategory = 'all';
+
+      // Fallback local flashcards if offline
+      const defaultCards = [
+        {
+          id: 'fc-1',
+          category: 'Waste Management',
+          categoryTag: 'waste',
+          icon: 'fa-solid fa-recycle',
+          question: 'What are the three primary waste streams mandated under Swachh Bharat and municipal bylaws?',
+          answer: '1. Wet Waste (Green Bin): Kitchen scraps, leftover food, and organic compostables.\n2. Dry Waste (Blue Bin): Clean plastics, paper, cardboard, metal cans, and glass.\n3. Domestic Hazardous Waste (Red Bin/Bag): Sanitary pads, diapers, expired medicines, batteries, and e-waste.',
+          lawRef: 'Solid Waste Management Rules 2016',
+          impactTip: 'Proper segregation at source cuts landfill methane emissions by up to 70% and earns +15 Civic Impact Points.'
+        },
+        {
+          id: 'fc-2',
+          category: 'Road Safety',
+          categoryTag: 'safety',
+          icon: 'fa-solid fa-shield-halved',
+          question: 'What legal protection does a "Good Samaritan" have when helping a road accident victim in India?',
+          answer: 'Good Samaritans are protected under Section 134A of the Motor Vehicles (Amendment) Act 2019. They cannot be detained, harassed, questioned without consent, or held liable for hospital costs, and have full immunity from civil and criminal prosecution.',
+          lawRef: 'Motor Vehicles (Amendment) Act 2019, Section 134A',
+          impactTip: 'Assisting a victim during the "Golden Hour" saves over 50% of road trauma victims.'
+        },
+        {
+          id: 'fc-3',
+          category: 'Emergency Services',
+          categoryTag: 'emergency',
+          icon: 'fa-solid fa-phone-volume',
+          question: 'What single nationwide emergency response number integrates Police, Fire, and Ambulance services?',
+          answer: '112 (ERSS - Emergency Response Support System). Dialing 112 connects citizens to a unified 24/7 emergency dispatch coordinating Police (100), Fire (101), Ambulance (108), and Disaster Management with live GPS location tracking.',
+          lawRef: 'Ministry of Home Affairs ERSS Initiative',
+          impactTip: 'Download the 112 India app for one-touch SOS panic alerts with live location sharing.'
+        },
+        {
+          id: 'fc-4',
+          category: 'Public Cleanliness',
+          categoryTag: 'cleanliness',
+          icon: 'fa-solid fa-broom',
+          question: 'What are the spot fines for dumping garbage in public places or open burning of municipal waste?',
+          answer: 'Urban Local Bodies impose spot fines ranging from ₹500 to ₹5,000 for public littering and open garbage dumping. Open burning of plastic, dry leaves, or municipal waste incurs penalties up to ₹25,000 under National Green Tribunal (NGT) directives.',
+          lawRef: 'NGT Air Pollution Directives & Municipal Bye-laws',
+          impactTip: 'Report recurring black spots on JanSetu so mechanized sweeping squads can clear and sanitize the spot.'
+        },
+        {
+          id: 'fc-5',
+          category: 'Water Conservation',
+          categoryTag: 'water',
+          icon: 'fa-solid fa-droplet',
+          question: 'Why is Rooftop Rainwater Harvesting (RWH) mandatory for properties in urban centers?',
+          answer: 'In major cities like Bengaluru (BWSSB regulations) and Chennai, RWH is mandatory on sites measuring 1,200 sq.ft and above. It replenishes depleted deep aquifers, controls localized urban street flooding, and ensures sustainable groundwater levels.',
+          lawRef: 'Urban Municipal Water Supply Bylaws & RWH Norms',
+          impactTip: 'A 1,000 sq.ft rooftop in a city with 900mm annual rainfall can harvest over 80,000 liters of water each year.'
+        },
+        {
+          id: 'fc-6',
+          category: 'Civic Transparency',
+          categoryTag: 'civic',
+          icon: 'fa-solid fa-scale-balanced',
+          question: 'What is the mandatory time limit for Public Information Officers (PIO) to respond under the RTI Act?',
+          answer: 'Standard requests must receive a formal response within 30 days of application receipt. If the requested information concerns the "Life or Liberty" of any citizen, the information must be provided strictly within 48 hours.',
+          lawRef: 'Right to Information Act, 2005 (Section 7)',
+          impactTip: 'JanSetu provides transparent tracking logs and audit trails so public grievances never get lost in bureaucratic silos.'
+        },
+        {
+          id: 'fc-7',
+          category: 'Roads & Infrastructure',
+          categoryTag: 'roads',
+          icon: 'fa-solid fa-road',
+          question: 'How does JanSetu calculate the Civic Priority Score for road defects and potholes?',
+          answer: 'The algorithmic Civic Priority Score (0-100) factors in: physical hazard severity (crater depth/width), estimated daily traffic and citizens affected, community upvotes, proximity to essential infrastructure (schools, transit stops, hospitals), and age of report.',
+          lawRef: 'JanSetu Smart Civic Priority Matrix',
+          impactTip: 'A score of 80+ marks an issue as Critical, triggering automated dispatch and SMS/Email escalation.'
+        },
+        {
+          id: 'fc-8',
+          category: 'Digital Safety',
+          categoryTag: 'digital',
+          icon: 'fa-solid fa-user-lock',
+          question: 'Where can citizens immediately report cyber financial fraud or digital identity theft in India?',
+          answer: 'Call the National Cyber Financial Fraud Helpline 1930 immediately within the golden hour to freeze compromised accounts, or file a complaint online at the official National Cyber Crime Reporting Portal (cybercrime.gov.in).',
+          lawRef: 'Indian Cyber Crime Coordination Centre (I4C)',
+          impactTip: 'Never share OTPs, UPI PINs, or remote screen sharing access (AnyDesk, TeamViewer) with unverified callers.'
+        }
+      ];
+
+      // Fetch cards from API or fallback
+      try {
+        const fetched = await API.flashcards.list('all');
+        cards = (fetched && fetched.length > 0) ? fetched : defaultCards;
+      } catch (err) {
+        cards = defaultCards;
+      }
+
+      let filteredCards = [...cards];
+
+      const scene = document.getElementById('flashcard-scene');
+      const questionEl = document.getElementById('card-question');
+      const answerEl = document.getElementById('card-answer');
+      const catBadge = document.getElementById('card-category-front');
+      const lawEl = document.getElementById('card-law');
+      const tipEl = document.getElementById('card-tip');
+      const indexIndicator = document.getElementById('card-index-indicator');
+      const progressText = document.getElementById('progress-text');
+      const progressBar = document.getElementById('progress-bar-fill');
+
+      function renderCurrentCard() {
+        if (filteredCards.length === 0) {
+          questionEl.textContent = 'No flashcards available in this category.';
+          answerEl.textContent = '';
+          lawEl.textContent = '';
+          tipEl.textContent = '';
+          return;
+        }
+
+        scene.classList.remove('is-flipped');
+
+        const card = filteredCards[currentIndex];
+        catBadge.innerHTML = `<i class="${card.icon || 'fa-solid fa-book'}"></i> ${card.category}`;
+        questionEl.textContent = card.question;
+        answerEl.textContent = card.answer;
+        lawEl.innerHTML = `<strong>Legal Framework:</strong> ${card.lawRef}`;
+        tipEl.innerHTML = `<strong>JanSetu Civic Tip:</strong> ${card.impactTip}`;
+        indexIndicator.textContent = `Card ${currentIndex + 1} of ${filteredCards.length}`;
+
+        progressText.textContent = `Card ${currentIndex + 1} of ${filteredCards.length}`;
+        const pct = Math.round(((currentIndex + 1) / filteredCards.length) * 100);
+        progressBar.style.width = `${pct}%`;
+      }
+
+      // Flip card on click
+      scene.addEventListener('click', () => {
+        scene.classList.toggle('is-flipped');
+      });
+
+      // Next / Prev controls
+      document.getElementById('btn-next-card').addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (currentIndex < filteredCards.length - 1) {
+          currentIndex++;
+        } else {
+          currentIndex = 0; // Wrap around
+          UI.showToast({
+            type: 'success',
+            title: 'Round Completed! 🏆',
+            message: 'You have reviewed all flashcards in this set. +20 Civic Impact Points awarded!'
+          });
+        }
+        renderCurrentCard();
+      });
+
+      document.getElementById('btn-prev-card').addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (currentIndex > 0) {
+          currentIndex--;
+        } else {
+          currentIndex = filteredCards.length - 1;
+        }
+        renderCurrentCard();
+      });
+
+      // Shuffle
+      document.getElementById('btn-shuffle-cards').addEventListener('click', (e) => {
+        e.stopPropagation();
+        for (let i = filteredCards.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [filteredCards[i], filteredCards[j]] = [filteredCards[j], filteredCards[i]];
+        }
+        currentIndex = 0;
+        renderCurrentCard();
+        UI.showToast({ type: 'info', title: 'Shuffled', message: 'Flashcards randomized.' });
+      });
+
+      // Filter pills
+      const pillContainer = document.getElementById('category-pills');
+      pillContainer.addEventListener('click', (e) => {
+        if (!e.target.classList.contains('filter-pill-btn')) return;
+
+        pillContainer.querySelectorAll('.filter-pill-btn').forEach(btn => btn.classList.remove('active'));
+        e.target.classList.add('active');
+
+        activeCategory = e.target.getAttribute('data-category');
+        if (activeCategory === 'all') {
+          filteredCards = [...cards];
+        } else {
+          filteredCards = cards.filter(c => c.categoryTag === activeCategory);
+        }
+        currentIndex = 0;
+        renderCurrentCard();
+      });
+
+      // Initialize initial card
+      renderCurrentCard();
+    });
+  </script>
+</body>
+</html>
