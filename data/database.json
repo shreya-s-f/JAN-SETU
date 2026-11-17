@@ -4,7 +4,6 @@
       "id": "usr-1",
       "name": "Rajesh Kumar",
       "email": "citizen@jansetu.in",
-      "password": "citizen123",
       "phone": "+91 98450 12345",
       "role": "citizen",
       "city": "Bengaluru",
@@ -16,25 +15,29 @@
         "First Reporter",
         "Civic Observer",
         "Community Helper"
-      ]
+      ],
+      "salt": "b8ebba569d74b27c0a7c4ceffb44760f",
+      "passwordHash": "6ce94647fc2756c9e7d704c3aae14b63990a42ca34ade00e2a842380c790a650828ee1f57596face5e7e25ca3aedd80a36f1d3ec1c8a08b370897fc295b1ecdd",
+      "emailVerified": true
     },
     {
       "id": "usr-2",
       "name": "Priya Sharma (IAS)",
       "email": "admin@jansetu.in",
-      "password": "admin123",
       "phone": "+91 98110 54321",
       "role": "admin",
       "city": "Bengaluru",
       "department": "Municipal Corporation HQ",
       "avatar": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=150&q=80",
-      "memberSince": "2025-08-01T09:00:00.000Z"
+      "memberSince": "2025-08-01T09:00:00.000Z",
+      "salt": "2fb6c37f8be1edfd8071277ae0e7adc3",
+      "passwordHash": "81724b6f29232096d948b1d7c0ba59c10771371a173a60d38ea6c85f4c3f791234e7a6f80fc2c61bb017e17f688a392f365dad83b965ee6f51b75c4d0fbccf53",
+      "emailVerified": true
     },
     {
       "id": "usr-3",
       "name": "Suresh Patil",
       "email": "worker@jansetu.in",
-      "password": "worker123",
       "phone": "+91 94480 98765",
       "role": "worker",
       "city": "Bengaluru",
@@ -43,7 +46,27 @@
       "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80",
       "completedTasks": 42,
       "activeTasks": 3,
-      "rating": 4.8
+      "rating": 4.8,
+      "salt": "c24a767409e8e74f5af7e9fef24e4d60",
+      "passwordHash": "00c7b3fad4f3bf03c732176539cbe91cfb0d446c562dc454491209ebd8720a1b17ecd971a8200e09c4c2993f002645a040774d921322f26dd6b0647bd02981bf",
+      "emailVerified": true
+    },
+    {
+      "id": "usr-1794936607670",
+      "name": "API Tester",
+      "email": "api_tester_1794936607664@example.com",
+      "passwordHash": "0c6e7c2f4860c6988e5f0da8ff2f1bfb344fc0d487daaee511ddb181c7bece108b046cecd3effbd56a01d816a5adecb5b7567e6bfa7726ed9bc6448690d4e86d",
+      "salt": "2d9ce5538fafdff7064d63ce44f2cb8a",
+      "phone": "+91 98000 00000",
+      "city": "Bengaluru",
+      "ward": "General Ward",
+      "role": "citizen",
+      "impactScore": 70,
+      "emailVerified": true,
+      "memberSince": "2026-11-17T17:30:07.670Z",
+      "badges": [
+        "First Reporter"
+      ]
     }
   ],
   "departments": [
@@ -189,6 +212,55 @@
     }
   ],
   "complaints": [
+    {
+      "id": "JS-2026-130596",
+      "title": "Severe crater at 100ft road Indiranagar",
+      "category": "pothole",
+      "description": "Dangerous double pothole causing two-wheeler skidding near metro pillar 42.",
+      "city": "Bengaluru",
+      "area": "Indiranagar",
+      "address": "Indiranagar, Bengaluru",
+      "lat": 12.9716,
+      "lng": 77.6412,
+      "priority": "medium",
+      "priorityScore": 75,
+      "peopleAffected": "50–100",
+      "status": "in_progress",
+      "reportedBy": {
+        "id": "usr-1794936607670",
+        "name": "API Tester",
+        "email": "api_tester_1794936607664@example.com"
+      },
+      "createdAt": "2026-11-17T17:30:07.705Z",
+      "updatedAt": "2026-11-17T17:30:07.721Z",
+      "beforeImage": "https://images.unsplash.com/photo-1515263487990-61b07816b324?auto=format&fit=crop&w=800&q=80",
+      "afterImage": null,
+      "upvotes": 1,
+      "upvotedBy": [
+        "usr-1794936607670"
+      ],
+      "verifications": {
+        "stillPresent": 1,
+        "resolved": 0
+      },
+      "verifiedBy": {
+        "usr-1794936607670": "still_present"
+      },
+      "timeline": [
+        {
+          "status": "submitted",
+          "title": "Issue Logged by Citizen",
+          "desc": "Complaint reported with verified coordinates & photo evidence by API Tester.",
+          "timestamp": "2026-11-17T17:30:07.706Z"
+        },
+        {
+          "status": "in_progress",
+          "title": "Status Updated: IN PROGRESS",
+          "desc": "Worker dispatched with asphalt cold patch",
+          "timestamp": "2026-11-17T17:30:07.722Z"
+        }
+      ]
+    },
     {
       "id": "JS-2026-001245",
       "title": "Massive crater pothole near 12th Main junction",
@@ -998,6 +1070,16 @@
   ],
   "notifications": [
     {
+      "id": "notif-1794936607706",
+      "userId": "usr-1794936607670",
+      "title": "Report Logged: JS-2026-130596",
+      "message": "Your complaint \"Severe crater at 100ft road Indiranagar\" has been registered into the municipal queue.",
+      "type": "status_update",
+      "complaintId": "JS-2026-130596",
+      "isRead": false,
+      "createdAt": "2026-11-17T17:30:07.706Z"
+    },
+    {
       "id": "notif-1",
       "userId": "usr-1",
       "title": "Work Started on JS-2026-001245",
@@ -1009,6 +1091,38 @@
     }
   ],
   "emailLogs": [
+    {
+      "id": "eml-1794936607722",
+      "to": "api_tester_1794936607664@example.com",
+      "recipientName": "API Tester",
+      "subject": "JanSetu Update: JS-2026-130596 is now IN_PROGRESS",
+      "template": "status_update",
+      "complaintId": "JS-2026-130596",
+      "status": "delivered",
+      "sentAt": "2026-11-17T17:30:07.722Z",
+      "bodyPreview": "Status of JS-2026-130596 transitioned to in_progress."
+    },
+    {
+      "id": "eml-1794936607706",
+      "to": "api_tester_1794936607664@example.com",
+      "recipientName": "API Tester",
+      "subject": "JanSetu: Report JS-2026-130596 Successfully Logged",
+      "template": "issue_submitted",
+      "complaintId": "JS-2026-130596",
+      "status": "delivered",
+      "sentAt": "2026-11-17T17:30:07.706Z",
+      "bodyPreview": "Report JS-2026-130596 (Severe crater at 100ft road Indiranagar) registered with Priority 75/100."
+    },
+    {
+      "id": "eml-1794936607671",
+      "to": "api_tester_1794936607664@example.com",
+      "recipientName": "API Tester",
+      "subject": "JanSetu: Verify your email address, API Tester! 🇮🇳",
+      "template": "email_verification",
+      "status": "delivered",
+      "sentAt": "2026-11-17T17:30:07.671Z",
+      "bodyPreview": "Account created for API Tester. Click verification link to activate."
+    },
     {
       "id": "eml-001",
       "to": "citizen@jansetu.in",

@@ -86,6 +86,16 @@ const Complaints = {
    * Create and persist new Civic Complaint
    */
   create(issueData, user) {
+    if (!issueData.title || issueData.title.trim().length < 5) {
+      throw new Error('Title must be at least 5 characters long.');
+    }
+    if (!issueData.description || issueData.description.trim().length < 10) {
+      throw new Error('Description must be at least 10 characters long.');
+    }
+    if (!issueData.category) {
+      throw new Error('Please select an issue category.');
+    }
+
     const all = Storage.get(STORAGE_KEYS.COMPLAINTS, []);
     const newId = Utils.generateComplaintId();
 
@@ -157,6 +167,13 @@ const Complaints = {
       EmailService.sendIssueSubmittedEmail(newComplaint, user);
     }
 
+    // Sync to backend API if online
+    if (window.API && typeof API.complaints?.create === 'function') {
+      API.complaints.create(newComplaint).catch(err => {
+        console.warn('[Complaints] Backend sync failed, offline fallback preserved:', err.message);
+      });
+    }
+
     return newComplaint;
   },
 
@@ -188,6 +205,11 @@ const Complaints = {
     // Give citizen upvote karma (+2 points)
     user.impactScore = (user.impactScore || 0) + 2;
     Storage.set(STORAGE_KEYS.CURRENT_USER, user);
+
+    // Sync to backend
+    if (window.API && typeof API.complaints?.upvote === 'function') {
+      API.complaints.upvote(complaintId).catch(e => console.warn('[Complaints] Upvote sync failed:', e.message));
+    }
 
     return { success: true, upvotes: item.upvotes, score: item.priorityScore };
   },
@@ -226,6 +248,11 @@ const Complaints = {
     // Reward citizen (+10 impact points)
     user.impactScore = (user.impactScore || 0) + 10;
     Storage.set(STORAGE_KEYS.CURRENT_USER, user);
+
+    // Sync to backend
+    if (window.API && typeof API.complaints?.verify === 'function') {
+      API.complaints.verify(complaintId, verificationType).catch(e => console.warn('[Complaints] Verification sync failed:', e.message));
+    }
 
     return { success: true, verifications: item.verifications };
   },
@@ -284,6 +311,11 @@ const Complaints = {
       }
     }
 
+    // Sync to backend
+    if (window.API && typeof API.complaints?.updateStatus === 'function') {
+      API.complaints.updateStatus(complaintId, { status: newStatus, ...extraData }).catch(e => console.warn('[Complaints] updateStatus sync failed:', e.message));
+    }
+
     return item;
   },
 
@@ -329,6 +361,16 @@ const Complaints = {
       if (window.EmailService) {
         EmailService.sendResolvedEmail(item, resolutionData, item.reportedBy);
       }
+    }
+
+    // Sync to backend
+    if (window.API && typeof API.complaints?.updateStatus === 'function') {
+      API.complaints.updateStatus(complaintId, {
+        status: 'resolved',
+        afterImage: item.afterImage,
+        resolutionNote: item.resolutionNote,
+        citizensBenefited: item.citizensBenefited
+      }).catch(e => console.warn('[Complaints] resolveIssue sync failed:', e.message));
     }
 
     return item;

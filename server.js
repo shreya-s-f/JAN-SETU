@@ -499,9 +499,14 @@ const server = http.createServer(async (req, res) => {
     if (pathname === '/api/auth/login' && method === 'POST') {
       const { email, password } = await parseRequestBody(req);
       const cleanEmail = (email || '').toLowerCase().trim();
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       
       if (!cleanEmail || !password) {
         return sendJson(res, 400, { success: false, message: 'Email and password are required.' });
+      }
+
+      if (!emailRegex.test(cleanEmail)) {
+        return sendJson(res, 400, { success: false, message: 'Please provide a valid email address.' });
       }
 
       const user = db.users.find(u => u.email.toLowerCase() === cleanEmail);
@@ -538,13 +543,24 @@ const server = http.createServer(async (req, res) => {
     if (pathname === '/api/auth/register' && method === 'POST') {
       const userData = await parseRequestBody(req);
       const cleanEmail = (userData.email || '').toLowerCase().trim();
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-      if (!userData.name || !cleanEmail || !userData.password) {
+      if (!userData.name || !userData.name.trim() || !cleanEmail || !userData.password) {
         return sendJson(res, 400, { success: false, message: 'Name, email, and password are required.' });
+      }
+
+      if (!emailRegex.test(cleanEmail)) {
+        return sendJson(res, 400, { success: false, message: 'Please provide a valid email address.' });
       }
 
       if (userData.password.length < 6) {
         return sendJson(res, 400, { success: false, message: 'Password must be at least 6 characters long.' });
+      }
+
+      const allowedRoles = ['citizen', 'worker', 'admin'];
+      const chosenRole = (userData.role || 'citizen').toLowerCase();
+      if (!allowedRoles.includes(chosenRole)) {
+        return sendJson(res, 400, { success: false, message: `Invalid role selected. Allowed roles are: ${allowedRoles.join(', ')}.` });
       }
 
       const exists = db.users.some(u => u.email.toLowerCase() === cleanEmail);
@@ -645,9 +661,14 @@ const server = http.createServer(async (req, res) => {
     if (pathname === '/api/auth/resend-verification' && method === 'POST') {
       const { email } = await parseRequestBody(req);
       const cleanEmail = (email || '').toLowerCase().trim();
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
       if (!cleanEmail) {
         return sendJson(res, 400, { success: false, message: 'Email address is required.' });
+      }
+
+      if (!emailRegex.test(cleanEmail)) {
+        return sendJson(res, 400, { success: false, message: 'Please provide a valid email address.' });
       }
 
       const user = db.users.find(u => u.email.toLowerCase() === cleanEmail);
@@ -706,34 +727,54 @@ const server = http.createServer(async (req, res) => {
     // 5. Complaints: Create
     if (pathname === '/api/complaints' && method === 'POST') {
       const issueData = await parseRequestBody(req);
+
+      // Validation
+      if (!issueData.title || issueData.title.trim().length < 5) {
+        return sendJson(res, 400, { success: false, message: 'Complaint title must be at least 5 characters long.' });
+      }
+
+      if (!issueData.description || issueData.description.trim().length < 10) {
+        return sendJson(res, 400, { success: false, message: 'Complaint description must be at least 10 characters long with sufficient detail.' });
+      }
+
+      if (!issueData.category || !issueData.category.trim()) {
+        return sendJson(res, 400, { success: false, message: 'A valid civic issue category must be selected.' });
+      }
+
+      const authUser = getAuthUser(req, db);
+      const reporter = authUser ? { id: authUser.id, name: authUser.name, email: authUser.email } : (issueData.reportedBy || { id: 'usr-1', name: 'Rajesh Kumar', email: 'citizen@jansetu.in' });
+
       const randomNum = Math.floor(100000 + Math.random() * 900000);
       const newId = `JS-${new Date().getFullYear()}-${randomNum}`;
 
       const newComplaint = {
         id: newId,
-        title: issueData.title,
-        category: issueData.category,
-        description: issueData.description,
+        title: issueData.title.trim(),
+        category: issueData.category.trim(),
+        description: issueData.description.trim(),
         city: issueData.city || 'Bengaluru',
         area: issueData.area || 'Indiranagar',
         address: issueData.address || `${issueData.area || 'Indiranagar'}, ${issueData.city || 'Bengaluru'}`,
-        lat: issueData.lat || 12.9716,
-        lng: issueData.lng || 77.6412,
+        lat: Number(issueData.lat) || 12.9716,
+        lng: Number(issueData.lng) || 77.6412,
         priority: issueData.priority || 'medium',
-        priorityScore: issueData.priorityScore || 75,
+        priorityScore: Number(issueData.priorityScore) || 75,
         peopleAffected: issueData.peopleAffected || '50–100',
         status: 'submitted',
-        reportedBy: issueData.reportedBy || { id: 'usr-1', name: 'Rajesh Kumar', email: 'citizen@jansetu.in' },
+        reportedBy: reporter,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         beforeImage: issueData.beforeImage || 'https://images.unsplash.com/photo-1515263487990-61b07816b324?auto=format&fit=crop&w=800&q=80',
+        afterImage: null,
         upvotes: 1,
+        upvotedBy: [reporter.id],
         verifications: { stillPresent: 1, resolved: 0 },
+        verifiedBy: { [reporter.id]: 'still_present' },
         timeline: [
           {
             status: 'submitted',
             title: 'Issue Logged by Citizen',
-            desc: `Complaint reported with verified coordinates & photo evidence by ${issueData.reportedBy?.name || 'Citizen'}.`,
+            desc: `Complaint reported with verified coordinates & photo evidence by ${reporter.name}.`,
             timestamp: new Date().toISOString()
           }
         ]
@@ -772,8 +813,8 @@ const server = http.createServer(async (req, res) => {
     // 6. Complaints: Get Single
     const matchId = pathname.match(/^\/api\/complaints\/([^/]+)$/);
     if (matchId && method === 'GET') {
-      const complaintId = matchId[1];
-      const found = db.complaints.find(c => c.id === complaintId);
+      const complaintId = matchId[1].toLowerCase();
+      const found = db.complaints.find(c => c.id.toLowerCase() === complaintId);
       if (found) return sendJson(res, 200, { success: true, complaint: found });
       return sendJson(res, 404, { success: false, message: 'Complaint not found.' });
     }
@@ -782,9 +823,18 @@ const server = http.createServer(async (req, res) => {
     const matchUpvote = pathname.match(/^\/api\/complaints\/([^/]+)\/upvote$/);
     if (matchUpvote && method === 'POST') {
       const complaintId = matchUpvote[1];
-      const item = db.complaints.find(c => c.id === complaintId);
+      const item = db.complaints.find(c => c.id.toLowerCase() === complaintId.toLowerCase());
       if (!item) return sendJson(res, 404, { success: false, message: 'Complaint not found.' });
 
+      const authUser = getAuthUser(req, db);
+      const voterId = authUser ? authUser.id : 'anon-' + (req.headers['x-forwarded-for'] || 'client');
+
+      if (!item.upvotedBy) item.upvotedBy = [];
+      if (item.upvotedBy.includes(voterId)) {
+        return sendJson(res, 400, { success: false, message: 'You have already upvoted this complaint.' });
+      }
+
+      item.upvotedBy.push(voterId);
       item.upvotes = (item.upvotes || 0) + 1;
       item.priorityScore = Math.min(100, item.priorityScore + 1);
       saveDatabase(db);
@@ -796,9 +846,22 @@ const server = http.createServer(async (req, res) => {
     if (matchVerify && method === 'POST') {
       const complaintId = matchVerify[1];
       const { type } = await parseRequestBody(req);
-      const item = db.complaints.find(c => c.id === complaintId);
+      const item = db.complaints.find(c => c.id.toLowerCase() === complaintId.toLowerCase());
       if (!item) return sendJson(res, 404, { success: false, message: 'Complaint not found.' });
 
+      if (!['still_present', 'resolved'].includes(type)) {
+        return sendJson(res, 400, { success: false, message: 'Invalid verification type. Expected still_present or resolved.' });
+      }
+
+      const authUser = getAuthUser(req, db);
+      const verifierId = authUser ? authUser.id : 'anon-' + (req.headers['x-forwarded-for'] || 'client');
+
+      if (!item.verifiedBy) item.verifiedBy = {};
+      if (item.verifiedBy[verifierId]) {
+        return sendJson(res, 400, { success: false, message: 'You have already verified this complaint.' });
+      }
+
+      item.verifiedBy[verifierId] = type;
       if (!item.verifications) item.verifications = { stillPresent: 0, resolved: 0 };
       if (type === 'still_present') item.verifications.stillPresent++;
       if (type === 'resolved') item.verifications.resolved++;
@@ -807,23 +870,36 @@ const server = http.createServer(async (req, res) => {
       return sendJson(res, 200, { success: true, verifications: item.verifications });
     }
 
-    // 9. Complaints: Admin Status Update / Assign / Escalate
+    // 9. Complaints: Admin / Worker Status Update / Assign / Escalate
     const matchStatus = pathname.match(/^\/api\/complaints\/([^/]+)\/status$/);
-    if (matchStatus && method === 'PUT') {
+    if (matchStatus && (method === 'PUT' || method === 'PATCH')) {
       const complaintId = matchStatus[1];
       const payload = await parseRequestBody(req);
-      const item = db.complaints.find(c => c.id === complaintId);
+      const item = db.complaints.find(c => c.id.toLowerCase() === complaintId.toLowerCase());
       if (!item) return sendJson(res, 404, { success: false, message: 'Complaint not found.' });
+
+      const allowedStatuses = ['submitted', 'under_review', 'verified', 'assigned', 'in_progress', 'resolved', 'closed', 'rejected', 'reopened'];
+      if (payload.status && !allowedStatuses.includes(payload.status)) {
+        return sendJson(res, 400, {
+          success: false,
+          message: `Invalid status "${payload.status}". Allowed statuses: ${allowedStatuses.join(', ')}.`
+        });
+      }
 
       if (payload.status) item.status = payload.status;
       if (payload.assignedWorker) item.assignedWorker = payload.assignedWorker;
       if (payload.deptId) item.deptId = payload.deptId;
-      if (payload.priorityScore) item.priorityScore = payload.priorityScore;
+      if (payload.priorityScore) item.priorityScore = Number(payload.priorityScore);
+      if (payload.afterImage) item.afterImage = payload.afterImage;
+      if (payload.resolutionNote) item.resolutionNote = payload.resolutionNote;
+      if (payload.status === 'resolved') item.resolvedAt = new Date().toISOString();
+
+      item.updatedAt = new Date().toISOString();
 
       item.timeline.push({
         status: payload.status || 'updated',
-        title: `Status Updated: ${(payload.status || 'updated').toUpperCase()}`,
-        desc: payload.note || 'Municipal operations update applied.',
+        title: `Status Updated: ${(payload.status || 'updated').toUpperCase().replace('_', ' ')}`,
+        desc: payload.note || payload.resolutionNote || 'Municipal operations update applied.',
         timestamp: new Date().toISOString()
       });
 
