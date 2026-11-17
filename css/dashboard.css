@@ -1,6 +1,7 @@
 /* ==========================================================================
    JANSETU DASHBOARDS (css/dashboard.css)
    KPI Cards, Complaint Tables, Leaflet Map Containers, Analytics Widgets
+   Primary Theme: WHITE + RED
    ========================================================================== */
 
 /* Dashboard Header & Greeting */
@@ -16,6 +17,7 @@
 .dashboard-greeting h1 {
   font-size: 1.8rem;
   margin-bottom: 0.25rem;
+  color: var(--text-main);
 }
 
 .dashboard-greeting p {
@@ -46,25 +48,27 @@
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  transition: transform var(--transition-fast), border-color var(--transition-fast);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
 
 .kpi-card:hover {
-  border-color: rgba(0, 102, 255, 0.4);
+  border-color: var(--primary-border);
+  box-shadow: var(--shadow-md);
   transform: translateY(-2px);
 }
 
 .kpi-info h3 {
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin-bottom: 0.5rem;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .kpi-number {
-  font-size: 2rem;
+  font-size: 2.1rem;
   font-weight: 800;
   line-height: 1;
   font-family: 'Space Grotesk', sans-serif;
@@ -93,11 +97,11 @@
   font-size: 1.35rem;
 }
 
-.kpi-icon-blue { background: rgba(0, 102, 255, 0.12); color: var(--primary); }
-.kpi-icon-amber { background: rgba(245, 158, 11, 0.12); color: var(--warning); }
-.kpi-icon-emerald { background: rgba(16, 185, 129, 0.12); color: var(--success); }
-.kpi-icon-rose { background: rgba(239, 68, 68, 0.12); color: var(--danger); }
-.kpi-icon-purple { background: rgba(168, 85, 247, 0.12); color: #a855f7; }
+.kpi-icon-red, .kpi-icon-blue { background: var(--primary-light); color: var(--primary); }
+.kpi-icon-amber { background: var(--warning-bg); color: #B45309; }
+.kpi-icon-emerald { background: var(--success-bg); color: var(--success); }
+.kpi-icon-rose { background: var(--danger-bg); color: var(--danger); }
+.kpi-icon-purple { background: #FAF5FF; color: #7E22CE; }
 
 /* Filter & Search Bar */
 .filter-bar {
@@ -111,6 +115,7 @@
   margin-bottom: 1.5rem;
   flex-wrap: wrap;
   gap: 1rem;
+  box-shadow: var(--shadow-sm);
 }
 
 .search-input-wrap {
@@ -141,12 +146,18 @@
 
 .filter-select {
   padding: 0.65rem 1rem;
-  background: var(--bg-surface-elevated);
+  background: var(--bg-surface);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
   color: var(--text-main);
   font-size: 0.88rem;
   outline: none;
+  transition: border-color var(--transition-fast);
+}
+
+.filter-select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-glow);
 }
 
 /* Data Tables */
@@ -156,6 +167,7 @@
   border-radius: var(--radius-md);
   border: 1px solid var(--border-color);
   background: var(--bg-surface);
+  box-shadow: var(--shadow-sm);
 }
 
 .data-table {
@@ -188,7 +200,7 @@
 }
 
 .data-table tbody tr:hover {
-  background: rgba(255, 255, 255, 0.02);
+  background: #F8FAFC;
 }
 
 /* Map Containers */
@@ -218,7 +230,7 @@
   height: 32px;
   border-radius: 50%;
   color: #fff;
-  box-shadow: 0 0 12px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
   font-size: 0.85rem;
   border: 2px solid #fff;
   transition: transform var(--transition-fast);
@@ -228,10 +240,10 @@
   transform: scale(1.2);
 }
 
-.marker-critical { background: #ef4444; box-shadow: 0 0 15px rgba(239, 68, 68, 0.8); }
-.marker-high { background: #f59e0b; box-shadow: 0 0 15px rgba(245, 158, 11, 0.8); }
-.marker-medium { background: #3b82f6; box-shadow: 0 0 15px rgba(59, 130, 246, 0.8); }
-.marker-resolved { background: #10b981; box-shadow: 0 0 15px rgba(16, 185, 129, 0.8); }
+.marker-critical { background: #D90429; box-shadow: 0 0 15px rgba(217, 4, 41, 0.7); }
+.marker-high { background: #F59E0B; box-shadow: 0 0 15px rgba(245, 158, 11, 0.7); }
+.marker-medium { background: #2563EB; box-shadow: 0 0 15px rgba(37, 99, 235, 0.7); }
+.marker-resolved { background: #10B981; box-shadow: 0 0 15px rgba(16, 185, 129, 0.7); }
 
 /* Leaflet Popup Styling */
 .leaflet-popup-content-wrapper {
@@ -285,6 +297,7 @@
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
   padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
 }
 
 .chart-card-header {
@@ -296,6 +309,7 @@
 
 .chart-card-header h3 {
   font-size: 1.05rem;
+  color: var(--text-main);
 }
 
 .chart-container {
@@ -316,6 +330,7 @@
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
   padding: 1.25rem;
+  box-shadow: var(--shadow-sm);
 }
 
 .area-health-top {
@@ -361,7 +376,7 @@
 }
 
 .badge-tile {
-  background: var(--bg-surface-elevated);
+  background: var(--bg-surface);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
   padding: 1.25rem 0.75rem;
@@ -370,7 +385,14 @@
   flex-direction: column;
   align-items: center;
   gap: 0.5rem;
+  box-shadow: var(--shadow-sm);
   transition: all var(--transition-fast);
+}
+
+.badge-tile:hover {
+  border-color: var(--primary-border);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 .badge-tile.locked {
@@ -385,11 +407,12 @@
 .badge-tile-title {
   font-size: 0.8rem;
   font-weight: 700;
+  color: var(--text-main);
 }
 
 .badge-tile-desc {
   font-size: 0.7rem;
-  color: var(--text-dim);
+  color: var(--text-muted);
 }
 
 /* Empty State Component */
@@ -397,7 +420,7 @@
   text-align: center;
   padding: 3.5rem 1.5rem;
   background: var(--bg-surface);
-  border: 1px dashed var(--border-color);
+  border: 1.5px dashed var(--border-color);
   border-radius: var(--radius-md);
 }
 
@@ -411,6 +434,7 @@
   font-size: 1.15rem;
   font-weight: 700;
   margin-bottom: 0.5rem;
+  color: var(--text-main);
 }
 
 .empty-state-desc {
