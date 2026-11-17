@@ -67,6 +67,40 @@
       "badges": [
         "First Reporter"
       ]
+    },
+    {
+      "id": "usr-1794936670904",
+      "name": "Rohan Verma",
+      "email": "tester_1794936670900@jansetu.in",
+      "passwordHash": "9978e10988bfe96dab11fa54a112aa58ef8d0720cb86da3a3d2c7d0628930181ea570f885fde19738a262d684af1f4d3133bf60ddd5a33f78e901394bee8f5cf",
+      "salt": "86b8a63b616dc3547df471d74ede556e",
+      "phone": "+91 98000 00000",
+      "city": "Pune",
+      "ward": "General Ward",
+      "role": "citizen",
+      "impactScore": 70,
+      "emailVerified": true,
+      "memberSince": "2026-11-17T17:31:10.904Z",
+      "badges": [
+        "First Reporter"
+      ]
+    },
+    {
+      "id": "usr-1794936690532",
+      "name": "Rohan Verma",
+      "email": "tester_1794936690529@jansetu.in",
+      "passwordHash": "794c4e75a21f806eb42539294659ba83c39ab2c878ba7c516896697b1657dd9f7cd866e1baeb3f83e3c1eeba4d9bc977b569d5f5e1947a8f3bef7fdbfea4e22b",
+      "salt": "edad6d8fcd3a3a1f46f983e3a3e92cdf",
+      "phone": "+91 98000 00000",
+      "city": "Pune",
+      "ward": "General Ward",
+      "role": "citizen",
+      "impactScore": 70,
+      "emailVerified": true,
+      "memberSince": "2026-11-17T17:31:30.532Z",
+      "badges": [
+        "First Reporter"
+      ]
     }
   ],
   "departments": [
@@ -212,6 +246,104 @@
     }
   ],
   "complaints": [
+    {
+      "id": "JS-2026-989935",
+      "title": "Broken stormwater drain causing road overflow",
+      "category": "drainage",
+      "description": "The drain lid collapsed during heavy rains, submerging the pedestrian crossing.",
+      "city": "Bengaluru",
+      "area": "Koramangala",
+      "address": "Koramangala, Bengaluru",
+      "lat": 12.9716,
+      "lng": 77.6412,
+      "priority": "medium",
+      "priorityScore": 75,
+      "peopleAffected": "50–100",
+      "status": "in_progress",
+      "reportedBy": {
+        "id": "usr-1794936690532",
+        "name": "Rohan Verma",
+        "email": "tester_1794936690529@jansetu.in"
+      },
+      "createdAt": "2026-11-17T17:31:30.551Z",
+      "updatedAt": "2026-11-17T17:31:30.555Z",
+      "beforeImage": "https://images.unsplash.com/photo-1515263487990-61b07816b324?auto=format&fit=crop&w=800&q=80",
+      "afterImage": null,
+      "upvotes": 1,
+      "upvotedBy": [
+        "usr-1794936690532"
+      ],
+      "verifications": {
+        "stillPresent": 1,
+        "resolved": 0
+      },
+      "verifiedBy": {
+        "usr-1794936690532": "still_present"
+      },
+      "timeline": [
+        {
+          "status": "submitted",
+          "title": "Issue Logged by Citizen",
+          "desc": "Complaint reported with verified coordinates & photo evidence by Rohan Verma.",
+          "timestamp": "2026-11-17T17:31:30.551Z"
+        },
+        {
+          "status": "in_progress",
+          "title": "Status Updated: IN PROGRESS",
+          "desc": "Drain cleaning squad deployed with heavy machinery.",
+          "timestamp": "2026-11-17T17:31:30.555Z"
+        }
+      ]
+    },
+    {
+      "id": "JS-2026-536034",
+      "title": "Broken stormwater drain causing road overflow",
+      "category": "drainage",
+      "description": "The drain lid collapsed during heavy rains, submerging the pedestrian crossing.",
+      "city": "Bengaluru",
+      "area": "Koramangala",
+      "address": "Koramangala, Bengaluru",
+      "lat": 12.9716,
+      "lng": 77.6412,
+      "priority": "medium",
+      "priorityScore": 75,
+      "peopleAffected": "50–100",
+      "status": "in_progress",
+      "reportedBy": {
+        "id": "usr-1794936670904",
+        "name": "Rohan Verma",
+        "email": "tester_1794936670900@jansetu.in"
+      },
+      "createdAt": "2026-11-17T17:31:10.927Z",
+      "updatedAt": "2026-11-17T17:31:10.931Z",
+      "beforeImage": "https://images.unsplash.com/photo-1515263487990-61b07816b324?auto=format&fit=crop&w=800&q=80",
+      "afterImage": null,
+      "upvotes": 1,
+      "upvotedBy": [
+        "usr-1794936670904"
+      ],
+      "verifications": {
+        "stillPresent": 1,
+        "resolved": 0
+      },
+      "verifiedBy": {
+        "usr-1794936670904": "still_present"
+      },
+      "timeline": [
+        {
+          "status": "submitted",
+          "title": "Issue Logged by Citizen",
+          "desc": "Complaint reported with verified coordinates & photo evidence by Rohan Verma.",
+          "timestamp": "2026-11-17T17:31:10.927Z"
+        },
+        {
+          "status": "in_progress",
+          "title": "Status Updated: IN PROGRESS",
+          "desc": "Drain cleaning squad deployed with heavy machinery.",
+          "timestamp": "2026-11-17T17:31:10.931Z"
+        }
+      ]
+    },
     {
       "id": "JS-2026-130596",
       "title": "Severe crater at 100ft road Indiranagar",
@@ -1070,6 +1202,26 @@
   ],
   "notifications": [
     {
+      "id": "notif-1794936690551",
+      "userId": "usr-1794936690532",
+      "title": "Report Logged: JS-2026-989935",
+      "message": "Your complaint \"Broken stormwater drain causing road overflow\" has been registered into the municipal queue.",
+      "type": "status_update",
+      "complaintId": "JS-2026-989935",
+      "isRead": false,
+      "createdAt": "2026-11-17T17:31:30.551Z"
+    },
+    {
+      "id": "notif-1794936670927",
+      "userId": "usr-1794936670904",
+      "title": "Report Logged: JS-2026-536034",
+      "message": "Your complaint \"Broken stormwater drain causing road overflow\" has been registered into the municipal queue.",
+      "type": "status_update",
+      "complaintId": "JS-2026-536034",
+      "isRead": false,
+      "createdAt": "2026-11-17T17:31:10.927Z"
+    },
+    {
       "id": "notif-1794936607706",
       "userId": "usr-1794936607670",
       "title": "Report Logged: JS-2026-130596",
@@ -1091,6 +1243,70 @@
     }
   ],
   "emailLogs": [
+    {
+      "id": "eml-1794936690555",
+      "to": "tester_1794936690529@jansetu.in",
+      "recipientName": "Rohan Verma",
+      "subject": "JanSetu Update: JS-2026-989935 is now IN_PROGRESS",
+      "template": "status_update",
+      "complaintId": "JS-2026-989935",
+      "status": "delivered",
+      "sentAt": "2026-11-17T17:31:30.555Z",
+      "bodyPreview": "Status of JS-2026-989935 transitioned to in_progress."
+    },
+    {
+      "id": "eml-1794936690551",
+      "to": "tester_1794936690529@jansetu.in",
+      "recipientName": "Rohan Verma",
+      "subject": "JanSetu: Report JS-2026-989935 Successfully Logged",
+      "template": "issue_submitted",
+      "complaintId": "JS-2026-989935",
+      "status": "delivered",
+      "sentAt": "2026-11-17T17:31:30.551Z",
+      "bodyPreview": "Report JS-2026-989935 (Broken stormwater drain causing road overflow) registered with Priority 75/100."
+    },
+    {
+      "id": "eml-1794936690532",
+      "to": "tester_1794936690529@jansetu.in",
+      "recipientName": "Rohan Verma",
+      "subject": "JanSetu: Verify your email address, Rohan Verma! 🇮🇳",
+      "template": "email_verification",
+      "status": "delivered",
+      "sentAt": "2026-11-17T17:31:30.532Z",
+      "bodyPreview": "Account created for Rohan Verma. Click verification link to activate."
+    },
+    {
+      "id": "eml-1794936670931",
+      "to": "tester_1794936670900@jansetu.in",
+      "recipientName": "Rohan Verma",
+      "subject": "JanSetu Update: JS-2026-536034 is now IN_PROGRESS",
+      "template": "status_update",
+      "complaintId": "JS-2026-536034",
+      "status": "delivered",
+      "sentAt": "2026-11-17T17:31:10.931Z",
+      "bodyPreview": "Status of JS-2026-536034 transitioned to in_progress."
+    },
+    {
+      "id": "eml-1794936670927",
+      "to": "tester_1794936670900@jansetu.in",
+      "recipientName": "Rohan Verma",
+      "subject": "JanSetu: Report JS-2026-536034 Successfully Logged",
+      "template": "issue_submitted",
+      "complaintId": "JS-2026-536034",
+      "status": "delivered",
+      "sentAt": "2026-11-17T17:31:10.927Z",
+      "bodyPreview": "Report JS-2026-536034 (Broken stormwater drain causing road overflow) registered with Priority 75/100."
+    },
+    {
+      "id": "eml-1794936670904",
+      "to": "tester_1794936670900@jansetu.in",
+      "recipientName": "Rohan Verma",
+      "subject": "JanSetu: Verify your email address, Rohan Verma! 🇮🇳",
+      "template": "email_verification",
+      "status": "delivered",
+      "sentAt": "2026-11-17T17:31:10.904Z",
+      "bodyPreview": "Account created for Rohan Verma. Click verification link to activate."
+    },
     {
       "id": "eml-1794936607722",
       "to": "api_tester_1794936607664@example.com",
